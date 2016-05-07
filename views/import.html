@@ -1,0 +1,24 @@
+
+<div id="leftBar">
+    <d2-left-bar></d2-left-bar>
+
+</div>
+<div id="mainPage">
+    <h2>Import Data</h2>
+
+    <label>Upload .xlsx file</label>
+    <input type="file" id="fileInput">
+
+    <button ng-click="importBegins()">Import</button>
+
+    <div ng-show="importSummary.outcome == 'error'">
+     <label>{{importSummary.errorMessage}}</label>
+    </div>
+<div class="alert">
+    <table>
+        <tr ng-repeat="error in errorList">
+            <td>{{error.description}}</td>
+        </tr>
+    </table>
+</div>
+</div>

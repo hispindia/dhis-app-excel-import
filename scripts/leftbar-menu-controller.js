@@ -1,9 +1,9 @@
 //Controller for column show/hide
-skeletonApp.controller('LeftBarMenuController',
+excelImport.controller('LeftBarMenuController',
         function($scope,
                 $location) {
     $scope.panel = function(){
-        $location.path('/panel').search();
+        $location.path('/import').search();
     }; 
     
 

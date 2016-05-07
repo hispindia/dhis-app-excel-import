@@ -2,7 +2,7 @@
  * Created by hisp on 2/12/15.
  */
 
-var skeletonAppServices = angular.module('skeletonAppServices', [])
+var excelImportAppServices = angular.module('excelImportAppServices', [])
     .service('MetadataService',function(){
        return {
            getOrgUnit : function(id){

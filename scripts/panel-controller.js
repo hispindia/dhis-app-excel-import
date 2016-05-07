@@ -2,7 +2,7 @@
  * Created by hisp on 2/12/15.
  */
 
-skeletonApp
+excelImport
     .controller('PanelController', function( $rootScope,
                                             $scope,
                                             $timeout,

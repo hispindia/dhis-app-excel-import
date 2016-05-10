@@ -2,14 +2,39 @@
  * Created by harsh on 7/5/16.
  */
 
+const DATA_SHEETNAME = "#import";
 const METADATA_SHEET = "settings";
 const TRACKER_PROGRAM_UID = "ProgramUID";
 const TRACKER_TRACKED_ENTITY = "TrackedEntityUID";
 const TRACKER_REGISTRATION_PLUS_ENROLLMENT = "TRACKER_REGISTRATION_PLUS_ENROLLMENT";
+const TRACKER_PROGRAM_STAGE = "";
 
+const SHEET_TYPES = [TRACKER_REGISTRATION_PLUS_ENROLLMENT]
 const FIRST_DELIMITER = "#";
-const SECOND_DELIMITER = ".";
+const SECOND_DELIMITER = "@";
+const THIRD_DELIMITER = "."
 
-const TAG_DATAELEMENT = "de";
-const TAG_ATTRIBUTE = "attr";
-const TAG_REGISTRATION_DATE = "registrationDate";
+const DOMAIN_TEI = "tei";
+const DOMAIN_EVENT = "ev";
+const DOMAIN_ENROLLMENT = "en";
+const DOMAIN_DATA_ELEMENT = "de";
+
+const DOMAINS = [DOMAIN_TEI,
+                 DOMAIN_ENROLLMENT,
+                  DOMAIN_EVENT,DOMAIN_DATA_ELEMENT  ];
+
+const FIELD_DATAELEMENT = "de";
+const FIELD_ATTRIBUTE = "attr";
+const FIELD_REGISTRATION_DATE = "registrationDate";
+const FIELD_ORG_UNIT = "ou";
+const FIELD_TRACKED_ENTITY = "te";
+const FIELD_EVENT_DATE="asd";
+const FIELD_NAME = "name";
+const FIELD_STORED_BY = "storedBy";
+
+const FIELDS = [FIELD_DATAELEMENT,
+                FIELD_ATTRIBUTE,FIELD_REGISTRATION_DATE,FIELD_ORG_UNIT,FIELD_TRACKED_ENTITY,FIELD_NAME
+                ]
+
+
+

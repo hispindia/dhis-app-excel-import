@@ -12,7 +12,8 @@ var excelImport = angular.module('excelImport',['ui.bootstrap',
     'd2Filters',
     'd2Services',
     'pascalprecht.translate',
-    'excelImportAppServices'
+    'excelImportAppServices',
+    'jsonFormatter'
 ])
 
 .config(function($routeProvider,$translateProvider){

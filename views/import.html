@@ -14,6 +14,51 @@
     <div ng-show="importSummary.outcome == 'error'">
      <label>{{importSummary.errorMessage}}</label>
     </div>
+    <div>
+        Following Mappings were found :-
+        <table class="table-bordered">
+            <tr>
+                <th>Domain</th>
+                <th>Column</th>
+                <th>Field</th>
+                <th>Arguments</th>
+            </tr>
+            <tbody ng-repeat="iSummary in initialSummary">
+            <tr><td rowspan="{{iSummary.length+1}}">{{iSummary[0].domain}}</td></tr>
+            <tr ng-repeat="item in iSummary">
+                <td>{{item.key}}</td>
+                <td>{{item.field}}</td>
+                <td>{{item.args}}</td>
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+    <div>
+        No of requests made : {{}}
+
+        <table class="table-bordered">
+            <thead>
+            <tr>
+                <th>Row</th>
+                <th>Domain</th>
+                <th>Status</th>
+                <th>Metadata Object</th>
+                <th>HTTP Response</th>
+            </tr>
+            </thead>
+            <tbody ng-repeat="summaryItems in importSummary">
+                <tr ng-repeat="item in summaryItems">
+                    <td rowspan="5">{{item.row+1}}</td>
+                    <td>{{item.domain}}</td>
+                    <td>{{item.status}}</td>
+                    <td><json-formatter json="item.metadata" open="0"></td>
+                    <td><json-formatter json="item.httpResponse" open="0"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
 <div class="alert">
     <table>
         <tr ng-repeat="error in errorList">

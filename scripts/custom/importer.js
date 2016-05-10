@@ -16,7 +16,7 @@ function importer(type,data,metadata){
     }
     switch(type){
         case TRACKER_REGISTRATION_PLUS_ENROLLMENT :
-            return importData(TRACKER_PROGRAM_UID,TRACKER_TRACKED_ENTITY);
+            return importData(TRACKER_PROGRAM_UID,TRACKER_TRACKED_ENTITY_UID);
             break;
     }
 

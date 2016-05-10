@@ -10,7 +10,7 @@ function validateMetaData(type,metadata){
     var data = metadata[0];
     switch(type){
         case TRACKER_REGISTRATION_PLUS_ENROLLMENT :
-            return validate(TRACKER_PROGRAM_UID,TRACKER_TRACKED_ENTITY);
+            return validate(TRACKER_PROGRAM_UID,TRACKER_TRACKED_ENTITY_UID);
             break;
     }
 
@@ -20,7 +20,7 @@ function validateMetaData(type,metadata){
         if (!data[TRACKER_PROGRAM_UID]){
             errorList.push({description : "Program UID not mapped"});
         }
-        if (!data[TRACKER_TRACKED_ENTITY]){
+        if (!data[TRACKER_TRACKED_ENTITY_UID]){
             errorList.push({description : "Tracked Entity UID not mapped"});
         }
 

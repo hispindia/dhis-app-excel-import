@@ -4,7 +4,7 @@
 
 </div>
 <div id="mainPage">
-    <h2>Import Data</h2>
+    <h2></h2>
 
     <label>Upload .xlsx file</label>
     <input type="file" id="fileInput">
@@ -31,11 +31,11 @@
                 <td>{{item.args}}</td>
             </tr>
             </tbody>
-
         </table>
     </div>
+    <br>
     <div>
-        No of requests made : {{}}
+        No of requests made : {{importSummary.requestCount}}
 
         <table class="table-bordered">
             <thead>
@@ -43,17 +43,23 @@
                 <th>Row</th>
                 <th>Domain</th>
                 <th>Status</th>
-                <th>Metadata Object</th>
                 <th>HTTP Response</th>
+                <th>Conflict Details</th>
+                <th>Reference</th>
+
             </tr>
             </thead>
             <tbody ng-repeat="summaryItems in importSummary">
+                <tr>
+                    <td rowspan="{{summaryItems.length+1}}">{{summaryItems[0].row+1}}</td>
+                </tr>
                 <tr ng-repeat="item in summaryItems">
-                    <td rowspan="5">{{item.row+1}}</td>
                     <td>{{item.domain}}</td>
                     <td>{{item.status}}</td>
-                    <td><json-formatter json="item.metadata" open="0"></td>
-                    <td><json-formatter json="item.httpResponse" open="0"></td>
+                    <td>{{item.httpResponse.message}}</td>
+                    <td><i ng-repeat="conflict in item.conflicts">{{conflict.object}} {{conflict.value}}</i> </td>
+                    <td>{{item.httpResponse.response.reference}}</td>
+
                 </tr>
             </tbody>
         </table>

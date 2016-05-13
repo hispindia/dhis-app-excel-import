@@ -38,47 +38,46 @@ excelImport
                 var headersMapGrpByDomain = prepareMapGroupedById(headers,"domain");
                 $timeout(function(){
                     $scope.initialSummary = prepareListFromMap(headersMapGrpByDomain);
+                    $scope.importSummary = {
+                        requestCount : 0
+                    }
+                    $scope.importSummaryMap = [];
+                    importHandler($scope.initialSummary,data_sheet,notificationCallBack);
                 })
 
-                $scope.importSummary = {
-                    requestCount : 0
-                }
-                $scope.importSummaryMap = [];
-                importHandler($scope.initialSummary,data_sheet,notificationCallBack);
 
                 function notificationCallBack(response){
                     var importStat = response.importStat;
 
                     var summaryItem = {};
                     summaryItem.domain = importStat.domain;
-                    summaryItem.metadata = JSON.parse(importStat.metadata);
-                    summaryItem.httpResponse = JSON.parse(response.responseText);
-                    summaryItem.status = response.statusText;debugger
-                    summaryItem.row = importStat.index;
+                    summaryItem.metadata = (importStat.metadata);
+                    console.log(response.status );
+                    var conflicts = getConflicts(response);
+                    summaryItem.conflicts = conflicts;
 
-                    if (!$scope.importSummaryMap[importStat.index]){
-                        $scope.importSummary[importStat.index] = [];
-                        $scope.importSummaryMap[importStat.index] = summaryItem;
-                        $scope.importSummary[importStat.index].push($scope.importSummaryMap[importStat.index]);
-                    }else{
-                        $scope.importSummaryMap[importStat.index].push(summaryItem);
+                    debugger
+                    if (response.status == "OK")
+                    summaryItem.httpResponse = response;
+                    else{
+                        summaryItem.httpResponse = JSON.parse(response.responseText);
                     }
 
-                    $timeout(function(){
-                        $scope.importSummary.requestCount = $scope.importSummary.requestCount+1;
-                    })
-                }
-                //var errorList = validateMetaData(TRACKER_REGISTRATION_PLUS_ENROLLMENT,metadata);
-                //if (errorList.length != 0){
-                //    $timeout(function(){
-                //        $scope.errorList = errorList;
-                //    })
-                //    return;
-                //}
+                        summaryItem.status = response.statusText;
+                    summaryItem.row = importStat.index;
 
-                $timeout(function(){
-                //    $scope.importSummary = importer(TRACKER_REGISTRATION_PLUS_ENROLLMENT,data_sheet,metadata);
-                })
+                    if (!$scope.importSummary[importStat.index]){
+                        $scope.importSummary[importStat.index] = [];
+                       // $scope.importSummaryMap[importStat.index] = $scope.importSummary[importStat.index];
+                        $scope.importSummary[importStat.index].push(summaryItem);
+                    }else{
+                        $scope.importSummary[importStat.index].push(summaryItem);
+                    }
+
+                        $timeout(function(){
+                            $scope.importSummary.requestCount = $scope.importSummary.requestCount+1;
+                        })
+                }
 
             };
 

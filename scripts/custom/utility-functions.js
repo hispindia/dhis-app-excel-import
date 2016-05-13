@@ -28,3 +28,27 @@ prepareListFromMap= function(map){
     }
     return list;
 }
+
+function getConflicts(response){
+    debugger
+    if (response.responseText){
+        var jsonRT = JSON.parse(response.responseText);
+        if (jsonRT.response.conflicts){
+            return jsonRT.response.conflicts;
+        }
+        if (jsonRT.response.importSummaries[0].conflicts){
+            return jsonRT.response.importSummaries[0].conflicts;
+        }
+        if (jsonRT.response.importSummaries[0].status == "ERROR"){
+            return ([{object:jsonRT.response.importSummaries[0].description,value:""}]);
+        }
+    }else{
+        if (response.httpStatus.response){
+            if (response.httpStatus.response.conflicts){
+                return response.httpStatus.response.conflicts;
+            }
+        }
+    }
+
+    return false;
+}

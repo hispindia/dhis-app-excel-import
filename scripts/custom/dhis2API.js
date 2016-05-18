@@ -115,8 +115,6 @@ dhis2API.enrollment.prototype.excelImportPopulator = function(header,data,tei){
                     this.enrollmentDate = data[header[i].key];
                 }
                 break
-
-
         }
     }
 }
@@ -234,7 +232,7 @@ dhis2API.event.prototype.POST = function(successCallback,errorCallback,index){
         success: function(response){
             response.importStat = {};
             response.importStat.index=index;
-            response.importStat.metadata = JSON.stringify(event);
+            response.importStat.metadata = event;
             response.importStat.domain = DOMAIN_EVENT;
 
             successCallback(response);
@@ -257,7 +255,17 @@ dhis2API.event.prototype.getAPIObject = function(){
         trackedEntityInstance : this.tei,
         eventDate : this.eventDate,
         programStage : this.programStage,
-        program : this.program
+        program : this.program,
+        dataValues : this.dataValues
     }
     return ent;
+}
+
+function addImportStatToResponse(index,metadata,domain,outcome){
+   var importStat = {};
+    importStat.index=index;
+    importStat.metadata = metadata;
+    importStat.domain = domain;
+    importStat.outcome = outcome;
+
 }

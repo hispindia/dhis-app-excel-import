@@ -5,7 +5,7 @@
 function assembleHeaderInfo(row1){
     var headerMap = [];
     for (var key in row1){
-        var fullTag = key.split(FIRST_DELIMITER)[1];
+        var fullTag = row1[key].split(FIRST_DELIMITER)[1];
         if (fullTag){
             var domain = fullTag.split(SECOND_DELIMITER)[0];
             if (!isValidDomain(domain)){ continue}
@@ -17,7 +17,7 @@ function assembleHeaderInfo(row1){
 
                 if (!isValidField(field)){continue}
             }
-            var item = {    key : key,
+            var item = {    key : row1[key],
                             domain : domain,
                             field : field,
                             args : fieldArgs

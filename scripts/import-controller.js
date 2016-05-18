@@ -39,7 +39,9 @@ excelImport
                 $timeout(function(){
                     $scope.initialSummary = prepareListFromMap(headersMapGrpByDomain);
                     $scope.importSummary = {
-                        requestCount : 0
+                        requestCount : 0,
+                        successCount : 0,
+                        errorCount : 0
                     }
                     $scope.importSummaryMap = [];
                     importHandler($scope.initialSummary,data_sheet,notificationCallBack);
@@ -80,6 +82,70 @@ excelImport
                 }
 
             };
+
+        }
+
+        $scope.getSet = function(){
+            var file = document.getElementById('fileInput').files[0];
+
+            Papa.parse(file, {
+                header: true,
+                dynamicTyping: true,
+                complete: function(results) {
+                    data = results;
+                    var headers = assembleHeaderInfo(data.meta.fields);
+
+                    var headersMapGrpByDomain = prepareMapGroupedById(headers,"domain");
+                    $timeout(function(){
+                        $scope.initialSummary = prepareListFromMap(headersMapGrpByDomain);
+                        $scope.importSummary = {
+                            requestCount : 0,
+                            successCount : 0,
+                            errorCount : 0
+                        }
+                        $scope.importSummaryMap = [];
+                        importHandler($scope.initialSummary,data.data,notificationCallBack);
+                    })
+                }
+            });
+
+            function notificationCallBack(response){
+                var importStat = response.importStat;
+
+                var summaryItem = {};
+                summaryItem.domain = importStat.domain;
+                summaryItem.metadata = (importStat.metadata);
+                console.log(response.status );
+                var conflicts = getConflicts(response);
+                var reference = findReference(response);
+                summaryItem.reference = reference;
+                summaryItem.conflicts = conflicts;
+
+                debugger
+                if (response.status == "OK") {
+                    summaryItem.httpResponse = response;
+                    $scope.importSummary.successCount = $scope.importSummary.successCount + 1;
+                }else{
+                    summaryItem.httpResponse = JSON.parse(response.responseText);
+                    $scope.importSummary.errorCount = $scope.importSummary.errorCount+1;
+
+                }
+
+                summaryItem.status = response.statusText;
+                summaryItem.row = importStat.index;
+
+                if (!$scope.importSummary[importStat.index]){
+                    $scope.importSummary[importStat.index] = [];
+                    // $scope.importSummaryMap[importStat.index] = $scope.importSummary[importStat.index];
+                    $scope.importSummary[importStat.index].push(summaryItem);
+                }else{
+                    $scope.importSummary[importStat.index].push(summaryItem);
+                }
+
+                $timeout(function(){
+                    $scope.importSummary.requestCount = $scope.importSummary.requestCount+1;
+                })
+            }
 
         }
 

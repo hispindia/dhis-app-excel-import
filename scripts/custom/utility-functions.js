@@ -21,6 +21,7 @@ prepareMapGroupedById= function(object,id){
     }
     return map;
 }
+
 prepareListFromMap= function(map){
     var list = [];
     for (var key in map){
@@ -30,7 +31,7 @@ prepareListFromMap= function(map){
 }
 
 function getConflicts(response){
-    debugger
+
     if (response.responseText){
         var jsonRT = JSON.parse(response.responseText);
         if (jsonRT.response.conflicts){
@@ -51,4 +52,20 @@ function getConflicts(response){
     }
 
     return false;
+}
+
+function findReference(response){
+
+    if (response.response){
+
+        if (response.response && response.response.reference){
+            return response.response.reference;
+        }
+
+        if (response.response.importSummaries ){
+            if (response.response.importSummaries[0].reference)
+                return response.response.importSummaries[0].reference;
+        }
+    }
+return "";
 }

@@ -80,9 +80,7 @@ excelImport
                             $scope.importSummary.requestCount = $scope.importSummary.requestCount+1;
                         })
                 }
-
             };
-
         }
 
         $scope.getSet = function(){
@@ -94,8 +92,8 @@ excelImport
                 complete: function(results) {
                     data = results;
                     var headers = assembleHeaderInfo(data.meta.fields);
-
                     var headersMapGrpByDomain = prepareMapGroupedById(headers,"domain");
+
                     $timeout(function(){
                         $scope.initialSummary = prepareListFromMap(headersMapGrpByDomain);
                         $scope.importSummary = {
@@ -121,7 +119,6 @@ excelImport
                 summaryItem.reference = reference;
                 summaryItem.conflicts = conflicts;
 
-                debugger
                 if (response.status == "OK") {
                     summaryItem.httpResponse = response;
                     $scope.importSummary.successCount = $scope.importSummary.successCount + 1;

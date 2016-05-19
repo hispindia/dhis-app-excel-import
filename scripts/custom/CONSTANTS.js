@@ -34,6 +34,7 @@ const FIELD_EVENT_DATE="eventDate";
 const FIELD_NAME = "name";
 const FIELD_STORED_BY = "storedBy";
 const FIELD_ENROLLMENT_DATE = "enrollmentDate";
+const FIELD_EVENT_MEMBER = "evmem";
 
 
 const FIELDS = [FIELD_DATAELEMENT,

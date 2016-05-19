@@ -44,7 +44,8 @@ function getConflicts(response){
             return ([{object:jsonRT.response.importSummaries[0].description,value:""}]);
         }
     }else{
-        if (response.httpStatus.response){
+        if (response.httpStatus){
+            if (response.httpStatus.response)
             if (response.httpStatus.response.conflicts){
                 return response.httpStatus.response.conflicts;
             }

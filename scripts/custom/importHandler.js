@@ -34,6 +34,7 @@ function importHandler(headers,importData,notificationCallback){
     }
 
     function importTEIs(header){
+
         importTEI(0,importData,header);
     }
 
@@ -49,7 +50,7 @@ function importHandler(headers,importData,notificationCallback){
 
             if (isProgramSpecified(header) && response.status == "OK"){
                 setTimeout(function(){
-                    enroll(index,data,header,response.response.reference);
+                    enroll(index,data[index],header,response.response.reference);
                 },0);
             }
             setTimeout(function(){

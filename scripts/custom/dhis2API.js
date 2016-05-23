@@ -169,7 +169,11 @@ dhis2API.event = function(){
     this.dataValues = []
 }
 
-dhis2API.event.prototype.excelImportPopulator = function(header,data){
+dhis2API.event.prototype.excelImportPopulator = function(header,data,tei){
+
+    if (tei.length >0){debugger
+        this.tei = tei[0].trackedEntityInstance;
+    }
 
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
@@ -214,6 +218,7 @@ dhis2API.event.prototype.excelImportPopulator = function(header,data){
                     value:  data[header[i].key]
                 })
                 break
+
         }
     }
 }

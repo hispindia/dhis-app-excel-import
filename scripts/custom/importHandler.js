@@ -15,20 +15,32 @@ function importHandler(headers,importData,notificationCallback){
     }
 
     function importEvents(header){
-        importEvent(0,importData,header);
+        var lookUpIndex =  getIndex(FIELD_UID_LOOKUP_BY_ATTR,header);
+
+        if (lookUpIndex){
+            importEvent(0,importData,header,true,lookUpIndex);
+
+        }
+        //importEvent(0,importData,header);
     }
-    function importEvent(index,data,header){
+    function importEvent(index,data,header,lookUpFlag,lookUpIndex){
         if (index == data.length){return}
 
-        var event = new dhis2API.event();
-        event.excelImportPopulator(header,data[index]);
-        event.POST(eventCallback,eventCallback,index);
+        if (lookUpFlag){
+            getTEIByAttr(ROOT_OU,header[lookUpIndex].args,data[index][header[lookUpIndex].key]).then(function(tei){
+
+                var event = new dhis2API.event();
+                event.excelImportPopulator(header,data[index],tei);
+                event.POST(eventCallback,eventCallback,index);
+            })
+        }
+
 
         function eventCallback(response){
             notificationCallback(response);
 
             setTimeout(function(){
-                importEvent(response.importStat.index+1,importData,header);
+                importEvent(response.importStat.index+1,importData,header,lookUpFlag,lookUpIndex);
             },0);
         }
     }
@@ -77,4 +89,26 @@ function importHandler(headers,importData,notificationCallback){
 
     }
 
+    function getIndex(field,header){
+        for (var i=0;i<header.length;i++){
+            if (header[i].field == field){
+                return i;
+            }
+        }
+        return undefined;
+    }
+
+    function getTEIByAttr(rootOU,attr,value){
+        var def = $.Deferred();
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '../../trackedEntityInstances?ou='+rootOU+'&ouMode=DESCENDANTS&filter='+attr+':eq:'+value,
+            success: function (data) {
+                def.resolve(data.trackedEntityInstances);
+            }
+        });
+        return def;
+    }
 }

@@ -11,9 +11,38 @@ function importHandler(headers,importData,notificationCallback){
                 break
             case DOMAIN_EVENT : importEvents(headers[key]);
                 break
+            case DOMAIN_EVENT_DELETE : deleteEvents(headers[key]);
+                break
         }
     }
 
+    function deleteEvents(header){
+
+        deleteEvent(0,importData,header);
+
+    }
+    function deleteEvent(index,data,header){
+        var event = new dhis2API.event();
+        var eventID = undefined;
+        for (var i=0;i<header.length;i++){
+            switch(header[i].field){
+                case FIELD_UID :
+                    if (header[i].args){
+                        eventID = header[i].args;
+                    }else{
+                        eventID= data[index][header[i].key];
+                    }
+                    break
+            }
+        }
+        if (eventID)
+        event.remove(eventID,index,callback);
+
+        function callback(response){
+            notificationCallback(response)
+            deleteEvent(response.importStat.index+1,data,header);
+        }
+    }
     function importEvents(header){
         var lookUpIndex =  getIndex(FIELD_UID_LOOKUP_BY_ATTR,header);
 

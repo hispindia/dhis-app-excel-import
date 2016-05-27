@@ -254,6 +254,26 @@ dhis2API.event.prototype.POST = function(successCallback,errorCallback,index){
 
     return def;
 }
+dhis2API.event.prototype.remove = function(id,index,callback){
+
+    $.ajax({
+        type: "DELETE",
+        url: '../../events/'+id,
+        success: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.domain = DOMAIN_EVENT_DELETE;
+          callback(response);
+        },
+        error: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.domain = DOMAIN_EVENT_DELETE;
+            callback(response);
+        }
+    });
+
+}
 dhis2API.event.prototype.getAPIObject = function(){
     var ent = {
         orgUnit : this.orgUnit,

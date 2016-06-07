@@ -6,9 +6,13 @@
 excelImport
     .controller('importController', function( $rootScope,
                                             $scope,
-                                              $timeout){
+                                              $timeout,
+                                              MetadataService){
 
-
+MetadataService.getRootOrgUnit().then(function(orgUnits){
+ROOT_OU_UID = orgUnits[0].id;
+    debugger
+})
         $scope.xlsxFile = undefined;
         $scope.requestStats = {
             requestCount : 0,

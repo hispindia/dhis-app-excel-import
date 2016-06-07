@@ -59,7 +59,7 @@ function importHandler(headers,importData,notificationCallback){
         if (index == data.length){return}
 
         if (lookUpFlag){
-            getTEIByAttr(ROOT_OU,header[lookUpIndex].args,data[index][header[lookUpIndex].key]).then(function(tei){
+            getTEIByAttr(ROOT_OU_UID,header[lookUpIndex].args,data[index][header[lookUpIndex].key]).then(function(tei){
 
                 var event = new dhis2API.event();
                 event.excelImportPopulator(header,data[index],tei);
@@ -141,7 +141,7 @@ function importHandler(headers,importData,notificationCallback){
         if (index == importData.length){return}
 
         if (lookUpFlag){
-            getTEIByAttr(ROOT_OU,header[lookUpIndex].args,importData[index][header[lookUpIndex].key]).then(function(tei){
+            getTEIByAttr(ROOT_OU_UID,header[lookUpIndex].args,importData[index][header[lookUpIndex].key]).then(function(tei){
 
                 if (tei.length==0){
                     var response = {}

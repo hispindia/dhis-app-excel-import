@@ -5,15 +5,15 @@
 var excelImportAppServices = angular.module('excelImportAppServices', [])
     .service('MetadataService',function(){
        return {
-           getOrgUnit : function(id){
+           getRootOrgUnit : function(){
                var def = $.Deferred();
                $.ajax({
                    type: "GET",
                    dataType: "json",
                    contentType: "application/json",
-                   url: '../../organisationUnits/'+id+".json",
+                   url: '../../organisationUnits?level=1&fields=id,name',
                    success: function (data) {
-                       def.resolve(data);
+                       def.resolve(data.organisationUnits);
                    }
                });
                return def;

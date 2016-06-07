@@ -33,15 +33,22 @@ prepareListFromMap= function(map){
 function getConflicts(response){
 
     if (response.responseText){
+
+        if (!isJson(response.responseText))
+            return ([{object:"Unexpected Error Occurred",value:response.responseText}]);
+
         var jsonRT = JSON.parse(response.responseText);
-        if (jsonRT.response.conflicts){
-            return jsonRT.response.conflicts;
-        }
-        if (jsonRT.response.importSummaries[0].conflicts){
-            return jsonRT.response.importSummaries[0].conflicts;
-        }
-        if (jsonRT.response.importSummaries[0].status == "ERROR"){
-            return ([{object:jsonRT.response.importSummaries[0].description,value:""}]);
+
+        if (jsonRT.response){
+            if (jsonRT.response.conflicts){
+                return jsonRT.response.conflicts;
+            }
+            if (jsonRT.response.importSummaries[0].conflicts){
+                return jsonRT.response.importSummaries[0].conflicts;
+            }
+            if (jsonRT.response.importSummaries[0].status == "ERROR"){
+                return ([{object:jsonRT.response.importSummaries[0].description,value:""}]);
+            }
         }
     }else{
         if (response.httpStatus){
@@ -52,6 +59,9 @@ function getConflicts(response){
         }
     }
 
+    if (response.conflicts)
+    return response.conflicts
+
     return false;
 }
 
@@ -59,7 +69,7 @@ function findReference(response){
 
     if (response.response){
 
-        if (response.response && response.response.reference){
+        if (response.response.reference){
             return response.response.reference;
         }
 
@@ -69,4 +79,24 @@ function findReference(response){
         }
     }
 return "";
+}
+
+//http://stackoverflow.com/questions/9804777/how-to-test-if-a-string-is-json-or-not
+//http://stackoverflow.com/users/3119662/kubosho
+function isJson(item) {
+    item = typeof item !== "string"
+        ? JSON.stringify(item)
+        : item;
+
+    try {
+        item = JSON.parse(item);
+    } catch (e) {
+        return false;
+    }
+
+    if (typeof item === "object" && item !== null) {
+        return true;
+    }
+
+    return false;
 }

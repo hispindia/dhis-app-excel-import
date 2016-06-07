@@ -115,6 +115,8 @@ dhis2API.enrollment.prototype.excelImportPopulator = function(header,data,tei){
                     this.enrollmentDate = data[header[i].key];
                 }
                 break
+            case FIELD_UID_LOOKUP_BY_ATTR :
+
         }
     }
 }
@@ -166,12 +168,13 @@ dhis2API.event = function(){
     this.tei = "";
     this.enrollmentDate = "";
     this.program = "";
-    this.dataValues = []
+    this.dataValues = [],
+    this.status = undefined
 }
 
 dhis2API.event.prototype.excelImportPopulator = function(header,data,tei){
 
-    if (tei.length >0){debugger
+    if (tei.length >0){
         this.tei = tei[0].trackedEntityInstance;
     }
 
@@ -218,6 +221,9 @@ dhis2API.event.prototype.excelImportPopulator = function(header,data,tei){
                     value:  data[header[i].key]
                 })
                 break
+            case FIELD_COMPLETE:
+                this.status = "COMPLETED";
+                break;
 
         }
     }
@@ -281,7 +287,8 @@ dhis2API.event.prototype.getAPIObject = function(){
         eventDate : this.eventDate,
         programStage : this.programStage,
         program : this.program,
-        dataValues : this.dataValues
+        dataValues : this.dataValues,
+        status : this.status
     }
     return ent;
 }

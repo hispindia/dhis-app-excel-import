@@ -11,9 +11,17 @@ function importHandler(headers,importData,notificationCallback){
                 break
             case DOMAIN_EVENT : importEvents(headers[key]);
                 break
+            case DOMAIN_ENROLLMENT : enrollTEIs(headers[key]);
+                break
             case DOMAIN_EVENT_DELETE : deleteEvents(headers[key]);
                 break
-            case DOMAIN_ENROLLMENT : enrollTEIs(headers[key])
+            case DOMAIN_TEI_DELETE : deleteTEIs(headers[key]);
+                break
+            case DOMAIN_OU_DELETE : deleteOUs(headers[key]);
+                break
+            case DOMAIN_OU_UPDATE : updateOUs(headers[key]);
+                break
+            case DOMAIN_DV : importDVS(headers[key]);
                 break
         }
     }
@@ -23,6 +31,8 @@ function importHandler(headers,importData,notificationCallback){
     }
 
     function deleteEvent(index,data,header){
+        if (index == data.length){return}
+
         var event = new dhis2API.event();
         var eventID = undefined;
         for (var i=0;i<header.length;i++){
@@ -33,7 +43,7 @@ function importHandler(headers,importData,notificationCallback){
                     }else{
                         eventID= data[index][header[i].key];
                     }
-                    break
+                    break;
             }
         }
 
@@ -51,9 +61,10 @@ function importHandler(headers,importData,notificationCallback){
 
         if (lookUpIndex){
             importEvent(0,importData,header,true,lookUpIndex);
+        }else{
+            importEvent(0,importData,header,false);
         }
 
-        //importEvent(0,importData,header);
     }
     function importEvent(index,data,header,lookUpFlag,lookUpIndex){
         if (index == data.length){return}
@@ -65,6 +76,10 @@ function importHandler(headers,importData,notificationCallback){
                 event.excelImportPopulator(header,data[index],tei);
                 event.POST(eventCallback,eventCallback,index);
             })
+        }else{
+            var event = new dhis2API.event();
+            event.excelImportPopulator(header,data[index]);
+            event.POST(eventCallback,eventCallback,index);
         }
 
         function eventCallback(response){
@@ -77,7 +92,6 @@ function importHandler(headers,importData,notificationCallback){
     }
 
     function importTEIs(header){
-
         importTEI(0,importData,header);
     }
 
@@ -117,7 +131,6 @@ function importHandler(headers,importData,notificationCallback){
 
         enrollment.excelImportPopulator(header,data,tei);
         enrollment.POST(notificationCallback,notificationCallback,index);
-
     }
 
     function getIndex(field,header){
@@ -129,6 +142,127 @@ function importHandler(headers,importData,notificationCallback){
         return undefined;
     }
 
+    function updateOUs(header){
+        updateOU(0,importData,header);
+    }
+
+    function updateOU(index,data,header){
+        if (index == data.length){return}
+
+        var ou = new dhis2API.organisationUnit();
+        var lookUpName = "";
+        for (var i=0;i<header.length;i++){
+            switch(header[i].field){
+                case FIELD_UID_LOOKUP_BY_NAME :
+                    if (header[i].args){
+                        lookUpName = header[i].args;
+                    }else{
+                        lookUpName= data[index][header[i].key];
+                    }
+                    break
+            }
+        }
+        ou.excelImportPopulator(header,data[index]);
+        getOuByName(lookUpName,ou.level,ou.parent).then(function(orgUnits){
+            if (orgUnits.length!=0){
+                ou.uid = orgUnits[0].id;
+                ou.openingDate = orgUnits[0].openingDate;
+                ou.shortName = orgUnits[0].shortName;
+                ou.update(index,callback)
+            }else{
+                var response = {};
+                response.importStat = {};
+                response.importStat.index=index;
+                response.importStat.domain = DOMAIN_OU_UPDATE;
+                response.status = "ou not found";
+                callback(response)
+            }
+        });
+
+        function callback(response){
+            notificationCallback(response);
+            updateOU(response.importStat.index+1,data,header);
+        }
+    }
+    function deleteOUs(header){
+
+        deleteOU(0,importData,header);
+    }
+
+    function deleteOU(index,data,header){
+        if (index == data.length){return}
+
+        var ou = new dhis2API.organisationUnit();
+
+        ou.excelImportPopulator(header,data[index]);//console.log(ou.uid)
+        ou.remove(index,callback);
+
+        function callback(response){
+            notificationCallback(response)
+            deleteOU(response.importStat.index+1,data,header);
+        }
+    }
+    function deleteTEIs(header){
+        var lookUpIndex =  getIndex(FIELD_UID_LOOKUP_BY_ATTR,header);
+
+        if (lookUpIndex!=undefined) {
+            deleteTEI(0,importData,header,true,lookUpIndex);
+        }else{
+            deleteTEI(0,importData,header,false);
+        }
+    }
+
+    function deleteTEI(index,data,header,lookUpFlag,lookUpIndex){
+        var teiID = undefined;
+        var tei = new dhis2API.trackedEntityInstance();
+
+        if (lookUpFlag) {
+            getTEIByAttr(ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key]).then(function (_tei) {
+                if (_tei.length != 0){
+                    teiID = _tei[0].trackedEntityInstance;
+                }
+                if (teiID){
+                    tei.remove(teiID,index,requestCallback);
+                }else{
+                    var response = {}
+                    response.importStat = {};
+                    response.importStat.index=index;
+                    response.importStat.domain = DOMAIN_TEI_DELETE;
+                    response.conflicts = [{value : "TEI Not Found"}];
+                    requestCallback(response);
+                    return
+                }
+            })
+        }else{
+            for (var i=0;i<header.length;i++){
+                switch(header[i].field){
+                    case FIELD_UID :
+                        if (header[i].args){
+                            teiID = header[i].args;
+                        }else{
+                            teiID= data[index][header[i].key];
+                        }
+                        break
+                }
+            }
+            if (teiID){
+                tei.remove(teiID,index,requestCallback);
+            }else{
+                var response = {}
+                response.importStat = {};
+                response.importStat.index=index;
+                response.importStat.domain = DOMAIN_TEI_DELETE;
+                response.conflicts = [{value : "TEI Not Found"}];
+                requestCallback(response);
+                return
+            }
+        }
+
+        function requestCallback(response){
+            notificationCallback(response)
+            deleteTEI(response.importStat.index+1,data,header,lookUpFlag,lookUpIndex);
+        }
+    }
     function enrollTEIs(header){
         var lookUpIndex =  getIndex(FIELD_UID_LOOKUP_BY_ATTR,header);
 
@@ -176,6 +310,42 @@ function importHandler(headers,importData,notificationCallback){
             url: '../../trackedEntityInstances?ou='+rootOU+'&ouMode=DESCENDANTS&filter='+attr+':eq:'+value,
             success: function (data) {
                 def.resolve(data.trackedEntityInstances);
+            }
+        });
+        return def;
+    }
+
+
+    function importDVS(header){
+        importDV(0,importData,header);
+
+    }
+
+    function importDV(index,data,header){
+        if (index == data.length){return}
+
+        var dv = new dhis2API.dataValue();
+
+        dv.excelImportPopulator(header,data[index]);
+        dv.POST(requestCallback,requestCallback,index);
+
+        function requestCallback(response){
+            notificationCallback(response);
+
+            setTimeout(function(){
+                importDV(response.importStat.index+1,importData,header);
+            },0);
+        }
+    }
+    function getOuByName(name,level,parentUID){
+        var def = $.Deferred();
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '../../organisationUnits?level='+level+'&fields=id,name,parent,shortName,openingDate&filter=parent.id:eq:'+parentUID+'&filter=name:eq:'+name,
+            success: function (data) {
+                def.resolve(data.organisationUnits);
             }
         });
         return def;

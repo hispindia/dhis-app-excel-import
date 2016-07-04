@@ -21,11 +21,9 @@ function assembleHeaderInfo(row1){
                             domain : domain,
                             field : field,
                             args : fieldArgs
-                    };
+                        }
+            }else{ continue }
 
-            }else{
-                    continue
-            }
             headerMap.push(item);
         }
     return headerMap;

@@ -60,7 +60,7 @@ function getConflicts(response){
     }
 
     if (response.conflicts)
-    return response.conflicts
+    return response.conflicts;
 
     return false;
 }

@@ -11,7 +11,7 @@ excelImport
 
 MetadataService.getRootOrgUnit().then(function(orgUnits){
 ROOT_OU_UID = orgUnits[0].id;
-    debugger
+
 })
         $scope.xlsxFile = undefined;
         $scope.requestStats = {
@@ -31,8 +31,7 @@ ROOT_OU_UID = orgUnits[0].id;
 
                     $timeout(function(){
                         $scope.initialSummary = prepareListFromMap(headersMapGrpByDomain);
-                        $scope.importSummary = {
-                        }
+                        $scope.importSummary = {};
                         $scope.importSummaryMap = [];
                         importHandler($scope.initialSummary,data.data,notificationCallBack);
                     })
@@ -124,7 +123,7 @@ ROOT_OU_UID = orgUnits[0].id;
             }
 
             $timeout(function(){
-                debugger
+
                 $scope.requestStats.requestCount = $scope.requestStats.requestCount+1;
             })
         }

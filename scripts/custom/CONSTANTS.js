@@ -21,11 +21,12 @@ const DOMAIN_TEI_DELETE = "teiDelete";
 const DOMAIN_OU_UPDATE = "ouUpdate";
 const DOMAIN_OU_DELETE = "ouDelete";
 const DOMAIN_DV = "dv";
+const DOMAIN_TEI_UPDATE = "teiUpdate";
 
 const DOMAINS = [DOMAIN_TEI,
                  DOMAIN_ENROLLMENT,
                   DOMAIN_EVENT,DOMAIN_DATA_ELEMENT,DOMAIN_EVENT_DELETE,DOMAIN_TEI_DELETE,DOMAIN_OU_UPDATE,
-                    DOMAIN_OU_DELETE,DOMAIN_DV  ];
+                    DOMAIN_OU_DELETE,DOMAIN_DV,DOMAIN_TEI_UPDATE  ];
 
 const FIELD_DATAELEMENT = "de";
 const FIELD_ATTRIBUTE = "attr";

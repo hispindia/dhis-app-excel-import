@@ -5,11 +5,25 @@
 var dhis2API = dhis2API || {};
 
 dhis2API.
-    trackedEntityInstance = function(){
+    trackedEntityInstance = function(tei){
+
+    if (tei){
+        this.uid = tei.trackedEntityInstance;
+        this.orgUnit = tei.orgUnit;
+        this.trackedEntity = tei.trackedEntity;
+        this.attributesMap = [];
+        this.attributes = [];
+
+        for (var i=0;i<tei.attributes.length;i++){
+            this.attributesMap[tei.attributes[i].attribute] = tei.attributes[i];
+            this.attributes.push(this.attributesMap[tei.attributes[i].attribute]);
+        }
+    }else{
 
         this.orgUnit = "";
         this.trackedEntity = "";
         this.attributes = [];
+    }
 }
 dhis2API.trackedEntityInstance.prototype.getAPIObject = function(){
     var tei = {
@@ -49,6 +63,33 @@ dhis2API.trackedEntityInstance.prototype.excelImportPopulator = function(header,
     }
 }
 
+dhis2API.trackedEntityInstance.prototype.ObjectPopulator = function(header,data){
+
+    for (var i=0;i<header.length;i++){
+        switch(header[i].field){
+            case FIELD_ORG_UNIT :
+                if (header[i].args){
+                    this.orgUnit = header[i].args;
+                }else{
+                    this.orgUnit = data[header[i].key];
+                }
+                break
+            case FIELD_TRACKED_ENTITY:
+                if (header[i].args){
+                    this.trackedEntity = header[i].args;
+                }else{
+                    this.trackedEntity = data[header[i].key];
+                }
+                break
+            case FIELD_ATTRIBUTE:
+                if (this.attributesMap[header[i].args] == undefined){
+                    continue;
+                }
+                this.attributesMap[header[i].args].value = data[header[i].key];
+                break
+        }
+    }
+}
 dhis2API.trackedEntityInstance.prototype.POST = function(successCallback,errorCallback,index){
     var tei = this.getAPIObject()
     var def = $.Deferred();
@@ -80,6 +121,38 @@ dhis2API.trackedEntityInstance.prototype.POST = function(successCallback,errorCa
 
     return def;
 }
+
+dhis2API.trackedEntityInstance.prototype.PUT = function(successCallback,errorCallback,index){
+    var tei = this.getAPIObject()
+    var def = $.Deferred();
+
+    $.ajax({
+        type: "PUT",
+        dataType: "json",
+        contentType: "application/json",
+        url: '../../trackedEntityInstances/'+this.uid,
+        data: JSON.stringify(tei),
+        success: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = JSON.stringify(tei);
+            response.importStat.domain = DOMAIN_TEI_UPDATE;
+
+            successCallback(response);
+        },
+        error: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = (tei);
+            response.importStat.domain = DOMAIN_TEI_UPDATE;
+
+            errorCallback(response);
+        }
+    });
+
+    return def;
+}
+
 
 dhis2API.trackedEntityInstance.prototype.remove = function(id,index,callback){
 

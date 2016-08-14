@@ -34,6 +34,9 @@ function importHandler(headers,importData,notificationCallback) {
             case DOMAIN_TEI_UPDATE :
                 updateTEIs(headers[key]);
                 break
+            case DOMAIN_USER :
+                importUsers(headers[key]);
+                break
         }
     }
 
@@ -414,7 +417,27 @@ function importHandler(headers,importData,notificationCallback) {
         }
     }
 
+    function importUsers(header){
+        importUser(0, importData, header);
+    }
 
+    function importUser(index, data, header){
+        if (index == data.length) {
+            return
+        }
+
+        var user = new dhis2API.user();
+        user.excelImportPopulator(header, data[index]);
+        user.POST(requestCallback, requestCallback, index);
+
+        function requestCallback(response) {
+            notificationCallback(response);
+
+            setTimeout(function () {
+                importUser(response.importStat.index + 1, importData, header);
+            }, 0);
+        }
+    }
     function getOuByName(name, level, parentUID) {
         var def = $.Deferred();
         $.ajax({

@@ -62,6 +62,9 @@ function getConflicts(response){
     if (response.conflicts)
     return response.conflicts;
 
+    if (response.importConflicts)
+    return response.importConflicts;
+
     return false;
 }
 
@@ -77,6 +80,10 @@ function findReference(response){
             if (response.response.importSummaries[0].reference)
                 return response.response.importSummaries[0].reference;
         }
+    }
+
+    if (response.lastImported){
+        return response.lastImported;
     }
 return "";
 }

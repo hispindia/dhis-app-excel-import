@@ -614,6 +614,162 @@ dhis2API.dataValue.prototype.POST = function(successCallback,errorCallback,index
     return def;
 }
 
+dhis2API.user = function(){
+
+        this.firstName= undefined;
+        this.surname=undefined;
+        this.email= undefined;
+        this.userCredentials = {
+            "username": undefined,
+            "password": undefined,
+            "userRoles": [ ]
+        };
+        this.organisationUnits= [];
+        this.userGroups = [  ]
+
+}
+
+dhis2API.user.prototype.getAPIObject = function(){
+    var user = {
+        "firstName": this.firstName,
+        "surname": this.surname,
+        "email": this.surname,
+        "userCredentials": {
+            "username": this.userCredentials.username,
+            "password": this.userCredentials.username,
+            "userRoles": []
+        },
+        "organisationUnits": [ ],
+        "userGroups": []
+    }
+
+    for (var i=0;i<this.userCredentials.userRoles.length;i++){
+        user.userCredentials.userRoles.push(this.userCredentials.userRoles[i]);
+    }
+
+    for (var i=0;i<this.organisationUnits.length;i++) {
+        user.organisationUnits.push(this.organisationUnits[i]);
+    }
+
+    for (var i=0;i<this.userGroups.length;i++){
+            user.userGroups.push(this.userGroups[i]);
+    }
+
+    return user;
+}
+
+dhis2API.user.prototype.excelImportPopulator = function(header,data){
+
+    for (var i=0;i<header.length;i++){
+        switch(header[i].field){
+
+            case FIELD_FIRST_NAME:
+                if (header[i].args){
+                    this.firstName = header[i].args;
+                }else{
+                    this.firstName = data[header[i].key];
+                }
+                break
+            case FIELD_SURNAME:
+                if (header[i].args){
+                    this.surname = header[i].args;
+                }else{
+                    this.surname = data[header[i].key];
+                }
+                break
+            case FIELD_EMAIL:
+                if (header[i].args){
+                    this.email = header[i].args;
+                }else{
+                    this.email = data[header[i].key];
+                }
+                break
+            case FIELD_USERNAME:
+                if (header[i].args){
+                    this.userCredentials.username = header[i].args;
+                }else{
+                    this.userCredentials.username = data[header[i].key];
+                }
+                break
+            case FIELD_PASSWORD:
+                if (header[i].args){
+                    this.userCredentials.password = header[i].args;
+                }else{
+                    this.userCredentials.password = data[header[i].key];
+                }
+                break
+            case FIELD_USER_ROLE:
+                if (header[i].args){
+                    this.userCredentials.userRoles.push({
+                        id: header[i].args,
+                    })
+                }else{
+                    this.userCredentials.userRoles.push({
+                        id:  data[header[i].key]
+                    })
+                }
+
+                break
+            case FIELD_USER_GROUP:
+                if (header[i].args){
+                    this.userGroups.push({
+                        id: header[i].args,
+                    })
+                }else{
+                    this.userGroups.push({
+                        id:  data[header[i].key]
+                    })
+                }
+
+                break
+            case FIELD_ORG_UNIT:
+                if (header[i].args){
+                    this.organisationUnits.push({
+                        id: header[i].args,
+                    })
+                }else{
+                    this.organisationUnits.push({
+                        id:  data[header[i].key]
+                    })
+                }
+
+                break
+        }
+    }
+}
+
+dhis2API.user.prototype.POST = function(successCallback,errorCallback,index){
+    var user = this.getAPIObject()
+    var def = $.Deferred();
+
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        async : false,
+        contentType: "application/json",
+        url: '../../users',
+        data: JSON.stringify(user),
+        success: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = user;
+            response.importStat.domain = DOMAIN_USER;
+
+            successCallback(response);
+        },
+        error: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = (user);
+            response.importStat.domain = DOMAIN_USER;
+
+            errorCallback(response);
+        }
+    });
+
+    return def;
+}
+
 function addImportStatToResponse(index,metadata,domain,outcome){
    var importStat = {};
     importStat.index=index;

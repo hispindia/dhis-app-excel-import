@@ -507,29 +507,38 @@ dhis2API.organisationUnit.prototype.remove = function(index,callback){
 
 
 dhis2API.dataValue = function(){
+    this.period = undefined;
+    this.orgUnit= undefined;
+    this.value= undefined
+    this.storedBy= undefined;
 
-    this.dataElement = undefined;
-        this.period = undefined;
-        this.orgUnit= undefined;
-        this.categoryOptionCombo= undefined;
-        this.value= undefined
-        this.storedBy= undefined;
+    this.decocList = [];
+
+    this.decoc = {
+        dataElement : undefined,
+        categoryOptionCombo:undefined,
+        value:undefined
+    }
+
+    this.dvs = {dataValues : []};
+    
 }
 
 dhis2API.dataValue.prototype.getAPIObject = function(){
-    var dvs = {dataValues:[]}
 
-    var dv = {
-        dataElement:this.dataElement,
-        period:this.period,
-        orgUnit:this.orgUnit,
-        categoryOptionCombo:this.categoryOptionCombo,
-        value:this.value,
-        storedBy:this.storedBy
+
+    for (var i=0;i<this.decocList.length;i++){
+        var dv = {
+            dataElement:this.decocList[i].dataElement,
+            period:this.period,
+            orgUnit:this.orgUnit,
+            categoryOptionCombo:this.decocList[i].categoryOptionCombo,
+            value:this.decocList[i].value,
+            storedBy:this.storedBy
+        }
+        this.dvs.dataValues.push(dv);
     }
-
-    dvs.dataValues.push(dv);
-    return dvs;
+    return this.dvs;
 }
 
 dhis2API.dataValue.prototype.excelImportPopulator = function(header,data){
@@ -543,11 +552,23 @@ dhis2API.dataValue.prototype.excelImportPopulator = function(header,data){
                     this.orgUnit = data[header[i].key];
                 }
                 break
-            case FIELD_DATAELEMENT:
-                if (header[i].args){
-                    this.dataElement = header[i].args;
-                }else{
-                    this.dataElement = data[header[i].key];
+            case FIELD_DECOC:
+                if (header[i].args) {
+                var decocHeader = header[i].args.split(":");
+                    var decoc = {  dataElement : undefined,
+                        categoryOptionCombo:undefined,
+                        value:undefined
+                    };
+                    if (decocHeader.length == 2) {
+                        decoc.dataElement = decocHeader[0];
+                        decoc.categoryOptionCombo = decocHeader[1];
+                        decoc.value = data[header[i].key];
+
+                        this.decocList.push(decoc);
+                    } else {
+                        alert("decoc not given properly!")
+                        return;
+                    }
                 }
                 break
             case FIELD_PERIOD:
@@ -564,20 +585,7 @@ dhis2API.dataValue.prototype.excelImportPopulator = function(header,data){
                     this.storedBy = data[header[i].key];
                 }
                 break
-            case FIELD_DVS_VALUE:
-                if (header[i].args){
-                    this.value = header[i].args;
-                }else{
-                    this.value = data[header[i].key];
-                }
-                break
-            case FIELD_CATEGORY_OPTION_COMBINATION:
-                if (header[i].args){
-                    this.categoryOptionCombo = header[i].args;
-                }else{
-                    this.categoryOptionCombo = data[header[i].key];
-                }
-                break
+
         }
     }
 }
@@ -597,7 +605,7 @@ dhis2API.dataValue.prototype.POST = function(successCallback,errorCallback,index
             response.importStat = {};
             response.importStat.index=index;
             response.importStat.metadata = dvs;
-            response.importStat.domain = DOMAIN_DV;
+            response.importStat.domain = DOMAIN_DVS;
 
             successCallback(response);
         },
@@ -605,7 +613,7 @@ dhis2API.dataValue.prototype.POST = function(successCallback,errorCallback,index
             response.importStat = {};
             response.importStat.index=index;
             response.importStat.metadata = (dvs);
-            response.importStat.domain = DOMAIN_DV;
+            response.importStat.domain = DOMAIN_DVS;
 
             errorCallback(response);
         }

@@ -28,7 +28,7 @@ function importHandler(headers,importData,notificationCallback) {
             case DOMAIN_OU_UPDATE :
                 updateOUs(headers[key]);
                 break
-            case DOMAIN_DV :
+            case DOMAIN_DVS :
                 importDVS(headers[key]);
                 break
             case DOMAIN_TEI_UPDATE :

@@ -88,6 +88,18 @@ function findReference(response){
 return "";
 }
 
+function findStatus(response){
+
+    if (response.statusText){
+        return response.statusText
+    }
+
+    if (response.status){
+        return response.status
+    }
+
+    return "";
+}
 //http://stackoverflow.com/questions/9804777/how-to-test-if-a-string-is-json-or-not
 //http://stackoverflow.com/users/3119662/kubosho
 function isJson(item) {

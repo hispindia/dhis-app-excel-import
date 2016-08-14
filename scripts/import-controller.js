@@ -111,7 +111,7 @@ ROOT_OU_UID = orgUnits[0].id;
                 }
             }
 
-            summaryItem.status = response.statusText;
+            summaryItem.status = findStatus(response);
             summaryItem.row = importStat.index;
 
             if (!$scope.importSummary[importStat.index]){

@@ -13,6 +13,9 @@ function assembleHeaderInfo(row1){
             var fieldArgs = undefined;
             if (field){
                 fieldArgs = field.split(THIRD_DELIMITER)[1];
+                if (fieldArgs){
+                    fieldArgs= fieldArgs.trim();
+                }
                 field = field.split(THIRD_DELIMITER)[0];
 
                 if (!isValidField(field)){continue}

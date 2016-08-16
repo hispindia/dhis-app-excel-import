@@ -97,7 +97,7 @@ dhis2API.trackedEntityInstance.prototype.POST = function(successCallback,errorCa
     $.ajax({
         type: "POST",
         dataType: "json",
-        async : false,
+        async : true,
         contentType: "application/json",
         url: '../../trackedEntityInstances',
         data: JSON.stringify(tei),
@@ -222,7 +222,7 @@ dhis2API.enrollment.prototype.POST = function(successCallback,errorCallback,inde
     $.ajax({
         type: "POST",
         dataType: "json",
-        async : false,
+        async : true,
         contentType: "application/json",
         url: '../../enrollments',
         data: JSON.stringify(enrollment),
@@ -333,7 +333,7 @@ dhis2API.event.prototype.POST = function(successCallback,errorCallback,index){
     $.ajax({
         type: "POST",
         dataType: "json",
-        async : false,
+        async : true,
         contentType: "application/json",
         url: '../../events',
         data: JSON.stringify(event),
@@ -597,7 +597,6 @@ dhis2API.dataValue.prototype.POST = function(successCallback,errorCallback,index
     $.ajax({
         type: "POST",
         dataType: "json",
-        async : false,
         contentType: "application/json",
         url: '../../dataValueSets',
         data: JSON.stringify(dvs),
@@ -753,7 +752,7 @@ dhis2API.user.prototype.POST = function(successCallback,errorCallback,index){
     $.ajax({
         type: "POST",
         dataType: "json",
-        async : false,
+        async : true,
         contentType: "application/json",
         url: '../../users',
         data: JSON.stringify(user),

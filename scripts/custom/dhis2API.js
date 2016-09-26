@@ -271,6 +271,7 @@ dhis2API.event.prototype.excelImportPopulator = function(header,data,tei){
     if (tei){
         if (tei.length >0){
             this.tei = tei[0].trackedEntityInstance;
+            this.orgUnit = tei[0].orgUnit;
         }
     }
 

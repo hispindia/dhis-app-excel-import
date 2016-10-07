@@ -275,7 +275,6 @@ dhis2API.event.prototype.excelImportPopulator = function(header,data,tei){
         }
     }
 
-
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
             case FIELD_ORG_UNIT :
@@ -709,7 +708,7 @@ dhis2API.user.prototype.excelImportPopulator = function(header,data){
             case FIELD_USER_ROLE:
                 if (header[i].args){
                     this.userCredentials.userRoles.push({
-                        id: header[i].args,
+                        id: header[i].args
                     })
                 }else{
                     this.userCredentials.userRoles.push({

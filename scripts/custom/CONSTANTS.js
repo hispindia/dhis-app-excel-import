@@ -23,6 +23,7 @@ const DOMAIN_OU_DELETE = "ouDelete";
 const DOMAIN_DVS = "dvs";
 const DOMAIN_TEI_UPDATE = "teiUpdate";
 const DOMAIN_USER = "user";
+const DOMAIN_TRACKER = "tracker";
 
 const DOMAINS = [DOMAIN_TEI,
                  DOMAIN_ENROLLMENT,

@@ -3,10 +3,20 @@
  */
 
 function importHandler(headers,importData,notificationCallback) {
+    var trackerSingleSheetCase = false;
+
+    if(isTrackerSingleSheetCase()){
+        handleMultiDomainCase();
+        return;
+    }
 
     for (var key in headers) {
+
         var domain = headers[key][0].domain;
         switch (domain) {
+            case DOMAIN_TRACKER :
+
+                break
             case DOMAIN_TEI :
                 importTEIs(headers[key]);
                 break
@@ -72,7 +82,11 @@ function importHandler(headers,importData,notificationCallback) {
         }
     }
 
-    function importEvents(header) {
+    function importEvents(header,tei) {
+        if (tei!=undefined){
+            importEvent(0, importData, header, false,null,tei);
+            return
+        }
         var lookUpIndex = getIndex(FIELD_UID_LOOKUP_BY_ATTR, header);
 
         if (lookUpIndex) {
@@ -83,7 +97,7 @@ function importHandler(headers,importData,notificationCallback) {
 
     }
 
-    function importEvent(index, data, header, lookUpFlag, lookUpIndex) {
+    function importEvent(index, data, header, lookUpFlag, lookUpIndex,tei) {
         if (index == data.length) {
             return
         }
@@ -95,7 +109,11 @@ function importHandler(headers,importData,notificationCallback) {
                 event.excelImportPopulator(header, data[index], tei);
                 event.POST(eventCallback, eventCallback, index);
             })
-        } else {
+        } else if (tei){
+            var event = new dhis2API.event();
+            event.excelImportPopulator(header, data[index], tei);
+            event.POST(eventCallback, eventCallback, index);
+        }else {
             var event = new dhis2API.event();
             event.excelImportPopulator(header, data[index]);
             event.POST(eventCallback, eventCallback, index);
@@ -103,7 +121,6 @@ function importHandler(headers,importData,notificationCallback) {
 
         function eventCallback(response) {
             notificationCallback(response);
-
             setTimeout(function () {
                 importEvent(response.importStat.index + 1, importData, header, lookUpFlag, lookUpIndex);
             }, 0);
@@ -123,14 +140,36 @@ function importHandler(headers,importData,notificationCallback) {
         tei.excelImportPopulator(header, data[index]);
         tei.POST(requestCallback, requestCallback, index);
 
+        var orgUnit = data[index][header[getIndex(FIELD_ORG_UNIT,header)].key];debugger
         function requestCallback(response) {
             notificationCallback(response);
 
-            if (isProgramSpecified(header) && response.status == "OK") {
-                setTimeout(function () {
-                    enroll(index, data[index], header, response.response.reference);
-                }, 0);
+            if (response.status == "OK"){
+                var teiUID = response.response.reference;
+                var tei = [{
+                    orgUnit : orgUnit,
+                    trackedEntityInstance : teiUID
+                }];
+                if (isProgramSpecified(header) ) {
+                    setTimeout(function () {
+                        enroll(index, data[index], header, teiUID, enrollCallback);
+                    }, 0);
+                }else{
+                    if (trackerSingleSheetCase){
+
+                        importEvents(headers[1],tei);
+                    }
+                }
             }
+
+            function enrollCallback(response){
+                notificationCallback(response);
+
+                if (trackerSingleSheetCase){
+                    importEvents(headers[1],tei);
+                }
+            }
+
             setTimeout(function () {
                 importTEI(response.importStat.index + 1, importData, header);
             }, 0);
@@ -182,7 +221,6 @@ function importHandler(headers,importData,notificationCallback) {
         }
     }
 
-
     function isProgramSpecified(header) {
         for (var i = 0; i < header.length; i++) {
             if (header[i].domain == DOMAIN_TEI && header[i].field == FIELD_PROGRAM) {
@@ -192,12 +230,12 @@ function importHandler(headers,importData,notificationCallback) {
         return false;
     }
 
-    function enroll(index, data, header, tei) {
+    function enroll(index, data, header, tei, enrollCallback) {
 
         var enrollment = new dhis2API.enrollment();
 
         enrollment.excelImportPopulator(header, data, tei);
-        enrollment.POST(notificationCallback, notificationCallback, index);
+        enrollment.POST(enrollCallback, enrollCallback, index);
     }
 
     function getIndex(field, header) {
@@ -392,7 +430,6 @@ function importHandler(headers,importData,notificationCallback) {
         return def;
     }
 
-
     function importDVS(header) {
         importDV(0, importData, header);
 
@@ -438,6 +475,7 @@ function importHandler(headers,importData,notificationCallback) {
             }, 0);
         }
     }
+
     function getOuByName(name, level, parentUID) {
         var def = $.Deferred();
         $.ajax({
@@ -450,5 +488,21 @@ function importHandler(headers,importData,notificationCallback) {
             }
         });
         return def;
+    }
+
+    function isTrackerSingleSheetCase(){
+        if (headers.length ==2){
+            if (headers[0][0].domain == DOMAIN_TEI && headers[1][0].domain == DOMAIN_EVENT  ){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function handleMultiDomainCase(){
+
+        trackerSingleSheetCase = true;
+        importTEIs(headers[0]);
+
     }
 }

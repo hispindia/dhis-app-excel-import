@@ -14,9 +14,6 @@ function importHandler(headers,importData,notificationCallback) {
 
         var domain = headers[key][0].domain;
         switch (domain) {
-            case DOMAIN_TRACKER :
-
-                break
             case DOMAIN_TEI :
                 importTEIs(headers[key]);
                 break
@@ -82,9 +79,9 @@ function importHandler(headers,importData,notificationCallback) {
         }
     }
 
-    function importEvents(header,tei) {
+    function importEvents(header,tei,index) {
         if (tei!=undefined){
-            importEvent(0, importData, header, false,null,tei);
+            importEvent(index, importData, header, false,null,tei);
             return
         }
         var lookUpIndex = getIndex(FIELD_UID_LOOKUP_BY_ATTR, header);
@@ -121,6 +118,9 @@ function importHandler(headers,importData,notificationCallback) {
 
         function eventCallback(response) {
             notificationCallback(response);
+
+            if (trackerSingleSheetCase) return;
+
             setTimeout(function () {
                 importEvent(response.importStat.index + 1, importData, header, lookUpFlag, lookUpIndex);
             }, 0);
@@ -128,19 +128,48 @@ function importHandler(headers,importData,notificationCallback) {
     }
 
     function importTEIs(header) {
-        importTEI(0, importData, header);
+
+        var lookUpIndex = getIndex(FIELD_UID_LOOKUP_BY_CODE, header);
+
+        if (lookUpIndex){
+            importTEI(0, importData, header,true,lookUpIndex);
+        }else{
+            importTEI(0, importData, header,false);
+        }
     }
 
-    function importTEI(index, data, header) {
+    function importTEI(index, data, header, lookUpFlag, lookUpIndex) {
+        var orgUnit;
+
         if (index == data.length) {
             return
         }
 
-        var tei = new dhis2API.trackedEntityInstance();
-        tei.excelImportPopulator(header, data[index]);
-        tei.POST(requestCallback, requestCallback, index);
+        if (lookUpFlag){
 
-        var orgUnit = data[index][header[getIndex(FIELD_ORG_UNIT,header)].key];debugger
+            var code = data[index][header[lookUpIndex].key];
+            getOuByCode(code).then(function(orgUnits){
+
+                var ouUid;
+                if (orgUnits.length >0){
+                    ouUid = orgUnits[0].id;
+                }
+
+                var tei = new dhis2API.trackedEntityInstance();
+                tei.excelImportPopulator(header, data[index],ouUid);
+                tei.POST(requestCallback, requestCallback, index);
+
+                orgUnit = ouUid;
+            });
+
+        }else{
+
+            var tei = new dhis2API.trackedEntityInstance();
+            tei.excelImportPopulator(header, data[index]);
+            tei.POST(requestCallback, requestCallback, index);
+
+            orgUnit = data[index][header[getIndex(FIELD_ORG_UNIT,header)].key];
+        }
         function requestCallback(response) {
             notificationCallback(response);
 
@@ -156,7 +185,6 @@ function importHandler(headers,importData,notificationCallback) {
                     }, 0);
                 }else{
                     if (trackerSingleSheetCase){
-
                         importEvents(headers[1],tei);
                     }
                 }
@@ -166,12 +194,12 @@ function importHandler(headers,importData,notificationCallback) {
                 notificationCallback(response);
 
                 if (trackerSingleSheetCase){
-                    importEvents(headers[1],tei);
+                    importEvents(headers[1],tei,index);
                 }
             }
 
             setTimeout(function () {
-                importTEI(response.importStat.index + 1, importData, header);
+                importTEI(response.importStat.index + 1, importData, header,lookUpFlag,lookUpIndex);
             }, 0);
         }
     }
@@ -483,6 +511,20 @@ function importHandler(headers,importData,notificationCallback) {
             dataType: "json",
             contentType: "application/json",
             url: '../../organisationUnits?level=' + level + '&fields=id,name,parent,shortName,openingDate&filter=parent.id:eq:' + parentUID + '&filter=name:eq:' + name,
+            success: function (data) {
+                def.resolve(data.organisationUnits);
+            }
+        });
+        return def;
+    }
+
+    function getOuByCode(code) {
+        var def = $.Deferred();
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '../../organisationUnits?fields=id,name&filter=code:eq:' + code,
             success: function (data) {
                 def.resolve(data.organisationUnits);
             }

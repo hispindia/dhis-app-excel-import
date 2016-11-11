@@ -34,7 +34,11 @@ dhis2API.trackedEntityInstance.prototype.getAPIObject = function(){
     return tei;
 }
 
-dhis2API.trackedEntityInstance.prototype.excelImportPopulator = function(header,data){
+dhis2API.trackedEntityInstance.prototype.excelImportPopulator = function(header,data,ouUID){
+
+    if(ouUID){
+        this.orgUnit = ouUID;
+    }
 
     for (var i=0;i<header.length;i++){
         switch(header[i].field){

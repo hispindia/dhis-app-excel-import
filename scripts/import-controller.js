@@ -53,7 +53,7 @@ ROOT_OU_UID = orgUnits[0].id;
                 var headersMapGrpByDomain = prepareMapGroupedById(headers,"domain");
                 $timeout(function(){
                     $scope.initialSummary = prepareListFromMap(headersMapGrpByDomain);
-                    $scope.importSummary = {}
+                    $scope.importSummary = {};
                     $scope.importSummaryMap = [];
                     importHandler($scope.initialSummary,data_sheet,notificationCallBack);
                 })

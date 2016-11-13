@@ -2,10 +2,11 @@
  * Created by harsh on 10/5/16.
  */
 
-function assembleHeaderInfo(row1){
+function assembleHeaderInfo(row1,isMappingSeparate){
     var headerMap = [];
     for (var key in row1){
-        var fullTag = row1[key].split(FIRST_DELIMITER)[1];
+
+        var fullTag = row1[key].data.split(FIRST_DELIMITER)[1];
         if (fullTag){
             var domain = fullTag.split(SECOND_DELIMITER)[0];
             if (!isValidDomain(domain)){ continue}
@@ -20,7 +21,7 @@ function assembleHeaderInfo(row1){
 
                 if (!isValidField(field)){continue}
             }
-            var item = {    key : row1[key],
+            var item = {    key : row1[key].key,
                             domain : domain,
                             field : field,
                             args : fieldArgs

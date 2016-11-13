@@ -48,7 +48,14 @@ ROOT_OU_UID = orgUnits[0].id;
                 var wb = XLSX.read(data, {type: 'binary'});
 
                 var data_sheet =  XLSX.utils.sheet_to_json(wb.Sheets[DATA_SHEETNAME]);
-                var headers = assembleHeaderInfo(prepareKeyList(data_sheet[0]));
+                var metadata_sheet = XLSX.utils.sheet_to_json(wb.Sheets[METADATA_SHEETNAME]);
+
+                if (metadata_sheet.length != 0){
+                    var headers = assembleHeaderInfo(prepareKeyList(metadata_sheet[0],true));
+                }else{
+                    var headers = assembleHeaderInfo(prepareKeyList(data_sheet[0]));
+
+                }
 
                 var headersMapGrpByDomain = prepareMapGroupedById(headers,"domain");
                 $timeout(function(){
@@ -59,10 +66,14 @@ ROOT_OU_UID = orgUnits[0].id;
                 })
             }
 
-            function prepareKeyList(data){
+            function prepareKeyList(data,isMappingSeparate){
                 var list = [];
                 for (key in data){
-                    list.push(key);
+                    if (isMappingSeparate){
+                        list.push({key : key, data :data[key]});
+                    }else{
+                        list.push({key : key, data :key});
+                    }
                 }
                 return list;
             }

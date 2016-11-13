@@ -394,6 +394,110 @@ dhis2API.event.prototype.getAPIObject = function(){
     return ent;
 }
 
+dhis2API.dataElement = function(){
+    this.name = undefined;
+    this.shortName = undefined;
+    this.aggregationType = undefined;
+    this.domainType = undefined;
+    this.valueType = undefined;
+    this.categoryCombo = undefined;
+    this.description = undefined;
+    this.aggregationLevels = undefined;
+}
+
+dhis2API.dataElement.prototype.excelImportPopulator = function(header,data){
+
+/* TODO  */
+    for (var i=0;i<header.length;i++){
+        switch(header[i].field){
+            case FIELD_NAME :
+                if (header[i].args){
+                    this.name = header[i].args;
+                }else{
+                    this.name = data[header[i].key];
+                }
+                break
+            case FIELD_SHORTNAME:
+                if (header[i].args){
+                    this.shortName = header[i].args;
+                }else{
+                    this.shortName = data[header[i].key];
+                }
+                break
+            case FIELD_DESCRIPTION:
+                if (header[i].args){
+                    this.description = header[i].args;
+                }else{
+                    this.description = data[header[i].key];
+                }
+                break
+            case FIELD_AGGREGATION_TYPE :
+                if (header[i].args){
+                    this.aggregationType = header[i].args;
+                }else{
+                    this.aggregationType = data[header[i].key];
+                }
+                break
+            case FIELD_DATAELEMENT:
+                this.dataValues.push({
+                    dataElement: header[i].args,
+                    value:  data[header[i].key]
+                })
+                break
+            case FIELD_COMPLETE:
+                this.status = "COMPLETED";
+                break;
+
+        }
+    }
+}
+
+dhis2API.dataElement.prototype.getAPIObject = function(){
+    var de = {
+        name :this.name,
+    shortName : this.shortName,
+    aggregationType : this.aggregationType,
+    domainType : this.domainType,
+    valueType : this.valueType,
+            categoryCombo : this.categoryCombo,
+            description :this.description,
+        aggregationLevels :this.aggregationLevels
+    }
+    return de;
+}
+
+dhis2API.dataElement.prototype.POST = function(successCallback,errorCallback,index){
+    var de = this.getAPIObject()
+    var def = $.Deferred();
+
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        async : true,
+        contentType: "application/json",
+        url: '../../events',
+        data: JSON.stringify(event),
+        success: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = event;
+            response.importStat.domain = DOMAIN_EVENT;
+
+            successCallback(response);
+        },
+        error: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = (event);
+            response.importStat.domain = DOMAIN_EVENT;
+
+            errorCallback(response);
+        }
+    });
+
+    return def;
+}
+
 dhis2API.organisationUnit = function(){
     this.uid=undefined;
     this.name = undefined;

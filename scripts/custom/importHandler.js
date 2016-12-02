@@ -181,7 +181,7 @@ function importHandler(headers,importData,notificationCallback) {
                 }];
                 if (isProgramSpecified(header) ) {
                     setTimeout(function () {
-                        enroll(index, data[index], header, teiUID, enrollCallback);
+                        enroll(index, data[index], header, tei, enrollCallback);
                     }, 0);
                 }else{
                     if (trackerSingleSheetCase){

@@ -189,7 +189,12 @@ dhis2API.enrollment = function(){
 
 dhis2API.enrollment.prototype.excelImportPopulator = function(header,data,tei){
 
-    this.tei = tei;
+    if (tei){
+        if (tei.length >0){
+            this.tei = tei[0].trackedEntityInstance;
+            this.orgUnit = tei[0].orgUnit;
+        }
+    }
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
             case FIELD_ORG_UNIT :

@@ -50,7 +50,7 @@ ROOT_OU_UID = orgUnits[0].id;
                 var data_sheet =  XLSX.utils.sheet_to_json(wb.Sheets[DATA_SHEETNAME]);
                 var metadata_sheet = XLSX.utils.sheet_to_json(wb.Sheets[METADATA_SHEETNAME]);
 
-                if (metadata_sheet.length != 0){
+                if (metadata_sheet.length != 0){debugger
                     var headers = assembleHeaderInfo(prepareKeyList(metadata_sheet[0],true));
                 }else{
                     var headers = assembleHeaderInfo(prepareKeyList(data_sheet[0]));

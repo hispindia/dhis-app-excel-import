@@ -499,7 +499,7 @@ function importHandler(headers,importData,notificationCallback) {
             notificationCallback(response);
 
             setTimeout(function () {
-                importDV(response.importStat.index + 1, importData, header);
+                importDV(response.importStat.index + 1, importData, header,lookUpIndex);
             }, 0);
         }
     }

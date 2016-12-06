@@ -459,19 +459,41 @@ function importHandler(headers,importData,notificationCallback) {
     }
 
     function importDVS(header) {
-        importDV(0, importData, header);
+
+        var lookUpIndex = getIndex(FIELD_UID_LOOKUP_BY_OU_CODE, header);
+
+        importDV(0, importData, header,lookUpIndex);
 
     }
 
-    function importDV(index, data, header) {
+    function importDV(index, data, header, lookUpIndex) {
         if (index == data.length) {
             return
         }
 
-        var dv = new dhis2API.dataValue();
+        if (lookUpIndex != undefined){
 
-        dv.excelImportPopulator(header, data[index]);
-        dv.POST(requestCallback, requestCallback, index);
+            var code = data[index][header[lookUpIndex].key];
+            getOuByCode(code).then(function(orgUnits){
+
+                var ouUid;
+                if (orgUnits.length >0){
+                    ouUid = orgUnits[0].id;
+                }
+
+                var dv = new dhis2API.dataValue();
+
+                dv.excelImportPopulator(header, data[index],ouUid);
+                dv.POST(requestCallback, requestCallback, index);
+            });
+
+        }else{
+            var dv = new dhis2API.dataValue();
+
+            dv.excelImportPopulator(header, data[index]);
+            dv.POST(requestCallback, requestCallback, index);
+        }
+
 
         function requestCallback(response) {
             notificationCallback(response);

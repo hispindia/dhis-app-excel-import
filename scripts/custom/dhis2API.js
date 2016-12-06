@@ -654,7 +654,9 @@ dhis2API.dataValue.prototype.getAPIObject = function(){
     return this.dvs;
 }
 
-dhis2API.dataValue.prototype.excelImportPopulator = function(header,data){
+dhis2API.dataValue.prototype.excelImportPopulator = function(header,data, ouUid){
+
+    this.orgUnit = ouUid;
 
     for (var i=0;i<header.length;i++){
         switch(header[i].field){

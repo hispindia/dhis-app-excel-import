@@ -122,8 +122,21 @@ ROOT_OU_UID = orgUnits[0].id;
                 }
             }
 
+
             summaryItem.status = findStatus(response);
             summaryItem.row = importStat.index;
+
+            /* case for datavalue sets */
+            if (response.dataSetComplete){
+                if (response.conflicts){
+                    summaryItem.status = "Conflict";
+                    $scope.requestStats.errorCount = $scope.requestStats.errorCount+1;
+                }else{
+                    summaryItem.httpResponse = response;
+                    $scope.requestStats.successCount = $scope.requestStats.successCount + 1;
+                }
+
+            }
 
             if (!$scope.importSummary[importStat.index]){
                 $scope.importSummary[importStat.index] = [];

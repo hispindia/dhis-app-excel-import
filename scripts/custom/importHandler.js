@@ -4,6 +4,7 @@
 
 function importHandler(headers,importData,notificationCallback) {
     var trackerSingleSheetCase = false;
+    var teiSecondComingMap = [];
 
     if(isTrackerSingleSheetCase()){
         handleMultiDomainCase();
@@ -141,6 +142,7 @@ function importHandler(headers,importData,notificationCallback) {
     function importTEI(index, data, header, lookUpFlag, lookUpIndex) {
         var orgUnit;
 
+        teiSecondComingMap[DOMAIN_TEI+index] = false;
         if (index == data.length) {
             return
         }
@@ -148,18 +150,34 @@ function importHandler(headers,importData,notificationCallback) {
         if (lookUpFlag){
 
             var code = data[index][header[lookUpIndex].key];
-            getOuByCode(code).then(function(orgUnits){
-
+           getOuByCode(code,lookUpIndex).then(function(orgUnits){
+               // This has made refactoring absolutely necessary :(
+                var lookUpIndex = orgUnits.lookUpIndex;
                 var ouUid;
-                if (orgUnits.length >0){
-                    ouUid = orgUnits[0].id;
+                if (orgUnits.organisationUnits.length >0){
+                    ouUid = orgUnits.organisationUnits[0].id;
                 }
-
-                var tei = new dhis2API.trackedEntityInstance();
-                tei.excelImportPopulator(header, data[index],ouUid);
-                tei.POST(requestCallback, requestCallback, index);
-
                 orgUnit = ouUid;
+
+                var lookUpIndex2 = getIndex(FIELD_UID_LOOKUP_BY_ATTR, header);
+
+                getTEIByAttr(ROOT_OU_UID, header[lookUpIndex2].args, data[index][header[lookUpIndex2].key],lookUpIndex,orgUnit).then(function (data_tei) {
+                    var orgUnit = data_tei.orgUnit;
+                    var lookUpIndex = data_tei.lookUpIndex;
+
+                    if (data_tei.trackedEntityInstances.length > 0){
+                        teiSecondComingMap[DOMAIN_TEI+index] = true;
+                        updateTEI(index, importData, header, true, lookUpIndex2,requestCallback,lookUpIndex);
+
+                    }else{
+                        var tei = new dhis2API.trackedEntityInstance();
+                        tei.excelImportPopulator(header, data[index],orgUnit);
+                        tei.POST(requestCallback, requestCallback, index,lookUpIndex);
+
+                    }
+
+                })
+
             });
 
         }else{
@@ -170,7 +188,15 @@ function importHandler(headers,importData,notificationCallback) {
 
             orgUnit = data[index][header[getIndex(FIELD_ORG_UNIT,header)].key];
         }
+
+
         function requestCallback(response) {
+            if(!orgUnit){
+                orgUnit = response.orgUnit;
+            }
+            if (!lookUpIndex){
+                lookUpIndex = response.lookUpIndex;
+            }
             notificationCallback(response);
 
             if (response.status == "OK"){
@@ -180,9 +206,33 @@ function importHandler(headers,importData,notificationCallback) {
                     trackedEntityInstance : teiUID
                 }];
                 if (isProgramSpecified(header) ) {
-                    setTimeout(function () {
-                        enroll(index, data[index], header, tei, enrollCallback);
-                    }, 0);
+
+                    if (teiSecondComingMap[DOMAIN_TEI+response.importStat.index]){
+                        var lookUpIndex4 = getIndex(FIELD_PROGRAM, header);
+
+                        getEnrollmentByTei(teiUID,header[lookUpIndex4].args,tei[0].orgUnit).then(function(enrollments){
+                            if(enrollments.length > 0){
+                                var response = {};
+                                response.status="OK";
+                                response.importStat = {};
+                                response.importStat.index=index;
+                                response.importStat.domain = DOMAIN_ENROLLMENT;
+                                response.lastImported = enrollments[0].enrollment;
+                                response.message = "Already enrolled";
+                                response.teiSecondComing = teiSecondComingMap[DOMAIN_TEI+response.importStat.index];
+                                enrollCallback(response);
+                            }else{
+                                setTimeout(function () {
+                                    enroll(index, data[index], header, tei, enrollCallback);
+                                }, 0);
+                            }
+                        })
+                    }else{
+                        setTimeout(function () {
+                            enroll(index, data[index], header, tei, enrollCallback);
+                        }, 0);
+                    }
+
                 }else{
                     if (trackerSingleSheetCase){
                         importEvents(headers[1],tei);
@@ -194,13 +244,35 @@ function importHandler(headers,importData,notificationCallback) {
                 notificationCallback(response);
 
                 if (trackerSingleSheetCase){
-                    importEvents(headers[1],tei,index);
+                    if (response.teiSecondComing){
+                        var lookUpIndex3 = getIndex(FIELD_PROGRAM_STAGE, headers[1]);
+
+                        getEventByTei(tei[0].trackedEntityInstance,headers[1][lookUpIndex3].args).then(function(evData){
+                            if (evData.events && evData.events.length>0){
+                                updateEvent(headers[1],data,index,evData.events[0].event);
+                            }
+                        })
+                    }else{
+                        importEvents(headers[1],tei,index);
+                    }
                 }
             }
 
             setTimeout(function () {
                 importTEI(response.importStat.index + 1, importData, header,lookUpFlag,lookUpIndex);
             }, 0);
+        }
+    }
+
+    function updateEvent(header,data,index,eventUid){
+
+        var event = new dhis2API.event();
+        event.excelImportPopulator(header, data[index]);
+        event.PUT(updateEventCallback, updateEventCallback, index,eventUid);
+
+        function updateEventCallback(response){
+            notificationCallback(response);
+
         }
     }
 
@@ -216,17 +288,21 @@ function importHandler(headers,importData,notificationCallback) {
 
     }
 
-    function updateTEI(index, data, header, lookUpFlag, lookUpIndex) {
+    function updateTEI(index, data, header, lookUpFlag, lookUpIndex,singleSheetCallback,legacy_lookupindex) {
+        var orgUnit;
         if (index == data.length) {
             return
         }
 
         if (lookUpFlag) {
-            getTEIByAttr(ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key]).then(function (data_tei) {
-                if (data_tei.length !=0) {
-                    var tei = new dhis2API.trackedEntityInstance(data_tei[0]);
+            getTEIByAttr(ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key],legacy_lookupindex).then(function (data_tei) {
+                var legacy_lookupindex = data_tei.lookUpIndex;
+
+                if (data_tei.trackedEntityInstances.length !=0) {
+                    orgUnit = data_tei.trackedEntityInstances[0].orgUnit;
+                    var tei = new dhis2API.trackedEntityInstance(data_tei.trackedEntityInstances[0]);
                     tei.ObjectPopulator(header, data[index]);
-                    tei.PUT(requestCallback, requestCallback, index);
+                    tei.PUT(requestCallback, requestCallback, index,legacy_lookupindex);
                 }else{
                     var response = {};
                     response.importStat = {};
@@ -241,8 +317,13 @@ function importHandler(headers,importData,notificationCallback) {
         }
 
         function requestCallback(response) {
-            notificationCallback(response);
 
+            response.orgUnit = orgUnit;
+
+            if (singleSheetCallback){
+                singleSheetCallback(response);
+                return;
+            }
             setTimeout(function () {
                 updateTEI(response.importStat.index + 1, importData, header,lookUpFlag, lookUpIndex);
             }, 0);
@@ -265,6 +346,7 @@ function importHandler(headers,importData,notificationCallback) {
         enrollment.excelImportPopulator(header, data, tei);
         enrollment.POST(enrollCallback, enrollCallback, index);
     }
+
 
     function getIndex(field, header) {
         for (var i = 0; i < header.length; i++) {
@@ -444,7 +526,7 @@ function importHandler(headers,importData,notificationCallback) {
         }
     }
 
-    function getTEIByAttr(rootOU, attr, value) {
+    function getTEIByAttr(rootOU, attr, value,lookUpIndex,ou) {
         var def = $.Deferred();
         $.ajax({
             type: "GET",
@@ -452,6 +534,12 @@ function importHandler(headers,importData,notificationCallback) {
             contentType: "application/json",
             url: '../../trackedEntityInstances?ou=' + rootOU + '&ouMode=DESCENDANTS&filter=' + attr + ':eq:' + value,
             success: function (data) {
+                if (lookUpIndex){
+                    data.lookUpIndex = lookUpIndex;
+                    data.orgUnit=ou;
+                    def.resolve(data);
+                    return
+                }
                 def.resolve(data.trackedEntityInstances);
             }
         });
@@ -493,7 +581,6 @@ function importHandler(headers,importData,notificationCallback) {
             dv.excelImportPopulator(header, data[index]);
             dv.POST(requestCallback, requestCallback, index);
         }
-
 
         function requestCallback(response) {
             notificationCallback(response);
@@ -540,7 +627,7 @@ function importHandler(headers,importData,notificationCallback) {
         return def;
     }
 
-    function getOuByCode(code) {
+    function getOuByCode(code,lookUpIndex) {
         var def = $.Deferred();
         $.ajax({
             type: "GET",
@@ -548,7 +635,43 @@ function importHandler(headers,importData,notificationCallback) {
             contentType: "application/json",
             url: '../../organisationUnits?fields=id,name&filter=code:eq:' + code,
             success: function (data) {
+                if (lookUpIndex){
+                    data.lookUpIndex=lookUpIndex;
+                    def.resolve(data);
+                    return;
+                }
                 def.resolve(data.organisationUnits);
+            }
+        });
+        return def;
+    }
+
+    function getEventByTei(teiUid,psUid) {
+        var def = $.Deferred();
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '../../events?programStage='+psUid+'&trackedEntityInstance='+teiUid+'&order:lastUpdated:asc&pageSize=1&fields=event',
+            success: function (data) {
+                def.resolve(data);
+            }
+        });
+        return def;
+    }
+
+    function getEnrollmentByTei(teiUid,prgUid,ouUid) {
+        var def = $.Deferred();
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '../../enrollments?programStatus=ACTIVE&ou='+ouUid+'&program='+prgUid+'&trackedEntityInstance='+teiUid,
+            success: function (data) {
+                if (!data.enrollments){
+                    data.enrollments = [];
+                }
+                def.resolve(data.enrollments);
             }
         });
         return def;

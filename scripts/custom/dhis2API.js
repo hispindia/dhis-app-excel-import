@@ -62,6 +62,12 @@ dhis2API.trackedEntityInstance.prototype.excelImportPopulator = function(header,
                     value:  data[header[i].key]
                 })
                 break
+            case FIELD_UID_LOOKUP_BY_ATTR:
+                this.attributes.push({
+                    attribute: header[i].args,
+                    value:  data[header[i].key]
+                })
+                break
 
         }
     }
@@ -87,14 +93,18 @@ dhis2API.trackedEntityInstance.prototype.ObjectPopulator = function(header,data)
                 break
             case FIELD_ATTRIBUTE:
                 if (this.attributesMap[header[i].args] == undefined){
-                    continue;
+                    this.attributes.push({
+                        attribute: header[i].args,
+                        value:  data[header[i].key]
+                    });
+                    break;
                 }
                 this.attributesMap[header[i].args].value = data[header[i].key];
                 break
         }
     }
 }
-dhis2API.trackedEntityInstance.prototype.POST = function(successCallback,errorCallback,index){
+dhis2API.trackedEntityInstance.prototype.POST = function(successCallback,errorCallback,index,lookUpIndex){
     var tei = this.getAPIObject()
     var def = $.Deferred();
 
@@ -110,6 +120,7 @@ dhis2API.trackedEntityInstance.prototype.POST = function(successCallback,errorCa
             response.importStat.index=index;
             response.importStat.metadata = JSON.stringify(tei);
             response.importStat.domain = DOMAIN_TEI;
+            response.lookUpIndex = lookUpIndex;
 
             successCallback(response);
         },
@@ -118,6 +129,7 @@ dhis2API.trackedEntityInstance.prototype.POST = function(successCallback,errorCa
             response.importStat.index=index;
             response.importStat.metadata = (tei);
             response.importStat.domain = DOMAIN_TEI;
+            response.lookUpIndex = lookUpIndex;
 
             errorCallback(response);
         }
@@ -126,7 +138,7 @@ dhis2API.trackedEntityInstance.prototype.POST = function(successCallback,errorCa
     return def;
 }
 
-dhis2API.trackedEntityInstance.prototype.PUT = function(successCallback,errorCallback,index){
+dhis2API.trackedEntityInstance.prototype.PUT = function(successCallback,errorCallback,index,legacy_lookupindex){
     var tei = this.getAPIObject()
     var def = $.Deferred();
 
@@ -141,7 +153,7 @@ dhis2API.trackedEntityInstance.prototype.PUT = function(successCallback,errorCal
             response.importStat.index=index;
             response.importStat.metadata = JSON.stringify(tei);
             response.importStat.domain = DOMAIN_TEI_UPDATE;
-
+            response.lookUpIndex = legacy_lookupindex;
             successCallback(response);
         },
         error: function(response){
@@ -149,6 +161,7 @@ dhis2API.trackedEntityInstance.prototype.PUT = function(successCallback,errorCal
             response.importStat.index=index;
             response.importStat.metadata = (tei);
             response.importStat.domain = DOMAIN_TEI_UPDATE;
+            response.lookUpIndex = legacy_lookupindex;
 
             errorCallback(response);
         }
@@ -185,6 +198,7 @@ dhis2API.enrollment = function(){
     this.tei = "";
     this.enrollmentDate = "";
     this.program = "";
+
 }
 
 dhis2API.enrollment.prototype.excelImportPopulator = function(header,data,tei){
@@ -255,6 +269,38 @@ dhis2API.enrollment.prototype.POST = function(successCallback,errorCallback,inde
 
     return def;
 }
+dhis2API.enrollment.prototype.PUT = function(successCallback,errorCallback,index,enUid){
+    var enrollment = this.getAPIObject();
+    var def = $.Deferred();
+
+    $.ajax({
+        type: "PUT",
+        dataType: "json",
+        async : true,
+        contentType: "application/json",
+        url: '../../enrollments/'+enUid,
+        data: JSON.stringify(enrollment),
+        success: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = JSON.stringify(enrollment);
+            response.importStat.domain = DOMAIN_ENROLLMENT;
+            response.message = "Update successful";
+            successCallback(response);
+        },
+        error: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = (enrollment);
+            response.importStat.domain = DOMAIN_ENROLLMENT;
+            response.message = "Update successful";
+            errorCallback(response);
+        }
+    });
+
+    return def;
+}
+
 dhis2API.enrollment.prototype.getAPIObject = function(){
     var ent = {
         orgUnit : this.orgUnit,
@@ -366,6 +412,42 @@ dhis2API.event.prototype.POST = function(successCallback,errorCallback,index){
 
     return def;
 }
+
+
+dhis2API.event.prototype.PUT = function(successCallback,errorCallback,index,evUID){
+    var event = this.getAPIObject();
+    var def = $.Deferred();
+
+    $.ajax({
+        type: "PUT",
+        dataType: "json",
+        async : true,
+        contentType: "application/json",
+        url: '../../events/'+evUID,
+        data: JSON.stringify(event),
+        success: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = event;
+            response.importStat.domain = DOMAIN_EVENT;
+            response.message = "Update successful";
+            response.lastImported = evUID;
+            successCallback(response);
+        },
+        error: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = (event);
+            response.importStat.domain = DOMAIN_EVENT;
+            response.message = "Update failed";
+
+            errorCallback(response);
+        }
+    });
+
+    return def;
+}
+
 dhis2API.event.prototype.remove = function(id,index,callback){
 
     $.ajax({

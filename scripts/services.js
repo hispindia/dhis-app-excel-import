@@ -3,7 +3,7 @@
  */
 
 var excelImportAppServices = angular.module('excelImportAppServices', [])
-    .service('MetadataService',function(){
+    .service('MetadataService',function($http){
        return {
            getOrgUnit : function(id){
                var def = $.Deferred();
@@ -17,6 +17,33 @@ var excelImportAppServices = angular.module('excelImportAppServices', [])
                    }
                });
                return def;
+           },
+           getAllPrograms : function () {
+               var def = $.Deferred();
+               $.ajax({
+                   type: "GET",
+                   dataType: "json",
+                   contentType: "application/json",
+                   url: '../../programs.json?fields=id,name,withoutRegistration,programTrackedEntityAttributes[*],programStages[id,name,programStageDataElements[id,dataElement[id,name,optionSet[options[code,displayName]],sortOrder]]]&paging=false',
+                   success: function (data) {
+                       def.resolve(data);
+                   }
+               });
+               return def;
+           },
+           getSQLView : function(sqlViewUID,param){
+               var def = $.Deferred();
+               $.ajax({
+                   type: "GET",
+                   dataType: "json",
+                   contentType: "application/json",
+                   url: '../../sqlViews/'+sqlViewUID+"/data?"+param,
+                   success: function (data) {
+                       def.resolve(data);
+                   }
+               });
+               return def;
            }
-       }
+
+    }
     });

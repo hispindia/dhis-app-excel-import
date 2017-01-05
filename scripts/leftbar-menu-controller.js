@@ -4,7 +4,8 @@ excelImport.controller('LeftBarMenuController',
                 $location) {
     $scope.panel = function(){
         $location.path('/import').search();
-    }; 
-    
-
-});
+    };
+            $scope.delete = function(){
+                $location.path('/delete').search();
+            };
+        });

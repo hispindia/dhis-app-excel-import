@@ -23,6 +23,9 @@ var excelImport = angular.module('excelImport',['ui.bootstrap',
         }).when('/import', {
             templateUrl:'views/import.html',
             controller: 'importController'
+        }).when('/delete', {
+            templateUrl:'views/delete.html',
+            controller: 'deleteController'
         }).otherwise({
             redirectTo : '/'
         });

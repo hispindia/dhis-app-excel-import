@@ -25,7 +25,8 @@ excelImport
                                                    $timeout,
                                                    MetadataService){
 
-        const SQLVIEW =  "LvtkCi9JlZO";
+        //const SQLVIEW =  "LvtkCi9JlZO";
+        const SQLVIEW =  "VocPQRcalrS";
 
         $scope.deleteRows = false;
        var def = $.Deferred();

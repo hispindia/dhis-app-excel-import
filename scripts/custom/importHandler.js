@@ -250,6 +250,8 @@ function importHandler(headers,importData,notificationCallback) {
                         getEventByTei(tei[0].trackedEntityInstance,headers[1][lookUpIndex3].args).then(function(evData){
                             if (evData.events && evData.events.length>0){
                                 updateEvent(headers[1],data,index,evData.events[0].event);
+                            }else{
+                                importEvents(headers[1],tei,index);
                             }
                         })
                     }else{

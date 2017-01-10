@@ -123,7 +123,6 @@ ROOT_OU_UID = orgUnits[0].id;
                 }
             }
 
-
             summaryItem.status = findStatus(response);
             summaryItem.row = importStat.index;
 

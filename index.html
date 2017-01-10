@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html ng-app="excelImport">
-<head lang="en">
+<html lang="en" ng-app="excelImport">
+<head>
     <meta charset="UTF-8">
-    <title># Excel Import</title>
+    <title>#XLImport</title>
+
+<script type="application/javascript" src="bundle.js"></script>
+<link type="text/css" rel="stylesheet" media="screen" href="styles/style.css">
 
     <script type="text/javascript" src="scripts/lib/jQuery/jquery.min.js"></script>
     <script type="text/javascript" src="scripts/lib/jQuery/ui/jquery-ui.min.js"></script>
@@ -12,6 +15,7 @@
 
     <script type="text/javascript" src="scripts/lib/bootstrap/js/bootstrap.min.js"></script>
     <link type="text/css" rel="stylesheet"  href="scripts/lib/bootstrap/css/bootstrap.min.css">
+
 
     <script type="text/javascript" src="scripts/lib/angular/angular.js"></script>
     <script type="text/javascript" src="scripts/lib/angular/angular-resource.js"></script>
@@ -23,14 +27,6 @@
     <script type="text/javascript" src="scripts/lib/angular/ui-bootstrap-tpls-0.14.0.js"></script>
     <script type="text/javascript" src="scripts/lib/angular/plugins/angular-translate.min.js"></script>
 
-
-
-    <!--DHIS commons libraries
-    <script type="text/javascript" src="scripts/lib/commons/commons.js"></script>
-    <script type="text/javascript" src="scripts/lib/commons/commons.ajax.js"></script>
-        <script type="text/javascript" src="scripts/lib/commons/underscore.min.js"></script>
-
--->
 
     <script type="text/javascript" src="scripts/lib/commons/dhis2.util.js"></script>
     <script type="text/javascript" src="scripts/lib/commons/commons.js"></script>
@@ -58,36 +54,24 @@
 
 
     <link type="text/css" rel="stylesheet" media="screen" href="styles/style.css">
+    <link type="text/css" rel="stylesheet" media="screen" href="styles/main.css">
 
-    <script type="text/javascript" src="scripts/lib/json-formatter/json-formatter.js"></script>
-    <link type="text/css" rel="stylesheet" media="screen" href="scripts/lib/json-formatter/json-formatter.css">
-
-
-    <script type="text/javascript" src="scripts/lib/papaParse/papaparse.js"></script>
-
-    <script type="text/javascript" src="scripts/lib/excel/xlsx.core.min.js"></script>
-    <script type="text/javascript" src="scripts/custom/CONSTANTS.js"></script>
-    <script type="text/javascript" src="scripts/custom/importHandler.js"></script>
-    <script type="text/javascript" src="scripts/custom/dhis2API.js"></script>
-
-
-
-    <script type="text/javascript" src="scripts/app.js"></script>
-    <script type="text/javascript" src="scripts/services.js"></script>
-    <script type="text/javascript" src="scripts/home-controller.js"></script>
-    <script type="text/javascript" src="scripts/leftbar-menu-controller.js"></script>
-    <script type="text/javascript" src="scripts/import-controller.js"></script>
-    <script type="text/javascript" src="scripts/custom/utility-functions.js"></script>
-    <script type="text/javascript" src="scripts/custom/tag-parser.js"></script>
-
+    <script type="text/javascript" src="angular-app.js"></script>
 
 
 
 </head>
 <body>
+
 <d2-header-bar></d2-header-bar>
 
 <div ng-view></div>
+<div id="mainContainer">
+    <div id="container"></div>
+    <div id="requestStats"></div>
+    <div id="dataTable"></div>
+</div>
+
 
 </body>
 </html>

@@ -86,35 +86,102 @@ function importHandler(headers,importData,notificationCallback) {
             return
         }
         var lookUpIndex = getIndex(FIELD_UID_LOOKUP_BY_ATTR, header);
-
         if (lookUpIndex) {
             importEvent(0, importData, header, true, lookUpIndex);
         } else {
             importEvent(0, importData, header, false);
         }
-
     }
 
     function importEvent(index, data, header, lookUpFlag, lookUpIndex,tei) {
         if (index == data.length) {
             return
         }
+        var lookUpIndex_1 = getIndex(FIELD_LOOKUP_CODE_OU_CO, header);
 
-        if (lookUpFlag) {
-            getTEIByAttr(ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key]).then(function (tei) {
+        if (lookUpIndex_1) {
+            var categoryOptionCode = false;
+            var ouCode = false;
+            getOutletOrgUnits().then(function (outlets) {
+                   var _index = index;
+                    var _header = header;
+                    var _data = data;
+                debugger
+                getCategoryOptions().then(function (co,header,lookUpIndex) {
+                        for (var j = 0; j < co.length; j++) {
+                            if (_data[_index]['#ev@de.BEUJq7HRTVF'] == co[j].code) {
+                                categoryOptionCode = true;
+                                var prgUidForCo = "Syu63y682i9";
+                                var prgStage = "CKrCmetD06e";
+                               var status = "ACTIVE";
+                                setOuAsRootOu(ROOT_OU_UID,prgUidForCo,_index,co[j], status,prgStage);
+                                break;
+                            }
+                            else{
+                                categoryOptionCode = false;
+                            }
+                        }
 
+                        for (var l = 0; l < outlets.length; l++) {
+                            if (_data[_index]['#ev@de.BEUJq7HRTVF'] == outlets[l].code) {
+                                ouCode = true;
+                                var prgUidForOU = "DLC3sZA9asA";
+                                var prgStage = "DZFh7HUSfum";
+                                var status = "ACTIVE";
+                                setOuAsOrgOu(outlets[l],prgUidForOU,_index,status,prgStage);
+                                break;
+
+                            }
+                            else{
+                                ouCode = false;
+                            }
+                        }
+                    if(categoryOptionCode == false && ouCode == false){
+                      //  getTEIByAttr(ROOT_OU_UID, header[lookUpIndex].args, data[_index][header[lookUpIndex].key]).then(function (tei) {
+
+                            var event = new dhis2API.event();
+                            event.excelImportPopulator(_header, _data[_index]);
+                            event.POST(eventCallback, eventCallback, _index);
+                     //   });
+                    }
+                   // }
+                })
+            })
+        }else{
+            if (lookUpFlag) {
+
+                getTEIByAttr(ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key]).then(function (tei) {
+
+                    var event = new dhis2API.event();
+                    event.excelImportPopulator(header, data[index], tei);
+                    event.POST(eventCallback, eventCallback, index);
+                });
+
+
+            } else if (tei) {
                 var event = new dhis2API.event();
                 event.excelImportPopulator(header, data[index], tei);
                 event.POST(eventCallback, eventCallback, index);
-            })
-        } else if (tei){
-            var event = new dhis2API.event();
-            event.excelImportPopulator(header, data[index], tei);
-            event.POST(eventCallback, eventCallback, index);
-        }else {
-            var event = new dhis2API.event();
-            event.excelImportPopulator(header, data[index]);
-            event.POST(eventCallback, eventCallback, index);
+            } else {
+                var event = new dhis2API.event();
+                event.excelImportPopulator(header, data[index]);
+                event.POST(eventCallback, eventCallback, index);
+            }
+        }
+
+
+        function setOuAsRootOu(oug,prog,index,coOu,status,prgStage) {
+            var ou = oug;
+                var event = new dhis2API.event();
+                event.excelImportPopulator(header, data[index], tei, ou,prog,coOu,status,prgStage);
+                event.POST(eventCallback, eventCallback, index);
+        }
+
+        function setOuAsOrgOu(oug,prog,index,status,prgStage){
+            var ou = oug.id;
+                var event = new dhis2API.event();
+                event.excelImportPopulator(header, data[index], tei, ou,prog,undefined,status,prgStage);
+                event.POST(eventCallback, eventCallback, index);
         }
 
         function eventCallback(response) {
@@ -127,6 +194,8 @@ function importHandler(headers,importData,notificationCallback) {
             }, 0);
         }
     }
+
+
 
     function importTEIs(header) {
 
@@ -622,6 +691,35 @@ function importHandler(headers,importData,notificationCallback) {
             url: '../../organisationUnits?level=' + level + '&fields=id,name,parent,shortName,openingDate&filter=parent.id:eq:' + parentUID + '&filter=name:eq:' + name,
             success: function (data) {
                 def.resolve(data.organisationUnits);
+            }
+        });
+        return def;
+    }
+
+
+    function getOutletOrgUnits() {
+        var def = $.Deferred();
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '../../organisationUnits?level=6&fields=id,name,code',
+            success: function (data) {
+                def.resolve(data.organisationUnits);
+            }
+        });
+        return def;
+    }
+
+    function getCategoryOptions() {
+        var def = $.Deferred();
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            url: '../../categoryOptions.json?fields=id,name,code',
+            success: function (data) {
+                def.resolve(data.categoryOptions);
             }
         });
         return def;

@@ -314,14 +314,15 @@ dhis2API.enrollment.prototype.getAPIObject = function(){
 /*Event*/
 dhis2API.event = function(){
     this.orgUnit = "";
-    this.tei = "";
+    this.tei = undefined;
     this.enrollmentDate = "";
     this.program = "";
     this.dataValues = [];
+    this.attributeCategoryOptions ="";
     this.status = undefined
 }
 
-dhis2API.event.prototype.excelImportPopulator = function(header,data,tei){
+dhis2API.event.prototype.excelImportPopulator = function(header,data,tei,ou,prog,coOu,status,prgStage){
 
     if (tei){
         if (tei.length >0){
@@ -379,6 +380,22 @@ dhis2API.event.prototype.excelImportPopulator = function(header,data,tei){
 
         }
     }
+
+
+    if(coOu != undefined){
+        this.attributeCategoryOptions = coOu.id;
+        this.orgUnit = ou;
+        this.program = prog;
+        this.status = status;
+        this.programStage = prgStage;
+    }
+else if(coOu == undefined){
+   // this.attributeCategoryOptions = ou;
+    this.orgUnit = ou;
+    this.program = prog;
+    this.status = status;
+    this.programStage = prgStage;
+}
 }
 
 dhis2API.event.prototype.POST = function(successCallback,errorCallback,index){
@@ -476,7 +493,9 @@ dhis2API.event.prototype.getAPIObject = function(){
         programStage : this.programStage,
         program : this.program,
         dataValues : this.dataValues,
-        status : this.status
+        status : this.status,
+        attributeCategoryOptions: this.attributeCategoryOptions
+
     }
     return ent;
 }

@@ -109,7 +109,7 @@ function importHandler(headers,importData,notificationCallback) {
                 debugger
                 getCategoryOptions().then(function (co,header,lookUpIndex) {
                         for (var j = 0; j < co.length; j++) {
-                            if (_data[_index]['#ev@de.BEUJq7HRTVF'] == co[j].code) {
+                            if (_data[_index]['#ev@lookupcodeouco.abc'] == co[j].code) {
                                 categoryOptionCode = true;
                                 var prgUidForCo = "Syu63y682i9";
                                 var prgStage = "CKrCmetD06e";
@@ -121,21 +121,22 @@ function importHandler(headers,importData,notificationCallback) {
                                 categoryOptionCode = false;
                             }
                         }
-
+                  if(categoryOptionCode == false) {
                         for (var l = 0; l < outlets.length; l++) {
-                            if (_data[_index]['#ev@de.BEUJq7HRTVF'] == outlets[l].code) {
+                            if (_data[_index]['#ev@lookupcodeouco.abc'] == outlets[l].code) {
                                 ouCode = true;
                                 var prgUidForOU = "DLC3sZA9asA";
                                 var prgStage = "DZFh7HUSfum";
                                 var status = "ACTIVE";
-                                setOuAsOrgOu(outlets[l],prgUidForOU,_index,status,prgStage);
+                                setOuAsOrgOu(outlets[l], prgUidForOU, _index, status, prgStage);
                                 break;
 
                             }
-                            else{
+                            else {
                                 ouCode = false;
                             }
                         }
+                    }
                     if(categoryOptionCode == false && ouCode == false){
                       //  getTEIByAttr(ROOT_OU_UID, header[lookUpIndex].args, data[_index][header[lookUpIndex].key]).then(function (tei) {
 

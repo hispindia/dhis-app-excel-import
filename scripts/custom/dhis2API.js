@@ -390,7 +390,7 @@ dhis2API.event.prototype.excelImportPopulator = function(header,data,tei,ou,prog
         this.programStage = prgStage;
     }
 else if(coOu == undefined){
-   // this.attributeCategoryOptions = ou;
+    this.attributeCategoryOptions = undefined;
     this.orgUnit = ou;
     this.program = prog;
     this.status = status;

@@ -20,10 +20,10 @@ export function RequestStats(props){
 var requestStats = props.data;
     return (
             <ul>
-            <li>No of Requests made : {requestStats.requestCount}</li>
-            <li>No of Successful requests : {requestStats.successCount}</li>
-            <li>No of Failed requests : {requestStats.errorCount}</li>
-                </ul>
+                <li>No of Requests made : {requestStats.requestCount}</li>
+                <li>No of Successful requests : {requestStats.successCount}</li>
+                <li>No of Failed requests : {requestStats.errorCount}</li>
+            </ul>
     )
 }
 function SummaryTD(props){

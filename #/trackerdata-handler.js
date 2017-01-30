@@ -17,6 +17,7 @@ export function trackerDataHandler(data,notificationCallback){
             if (flag != "trackedEntityInstances"){
                 return;
             }
+            debugger
             importData(0,data.enrollments,"enrollments",notificationCallback);
             importData(0,data.events,"events",notificationCallback);
         }
@@ -28,8 +29,9 @@ export function trackerDataHandler(data,notificationCallback){
             }
             var dataObj = data[index];
             var uid;
-
+debugger
             if (endpointName == "trackedEntityInstances"){
+                debugger
                 uid = dataObj.trackedEntityInstance;
             }else if (endpointName == "enrollments"){
                 uid = dataObj.enrollment;
@@ -45,22 +47,27 @@ export function trackerDataHandler(data,notificationCallback){
             }, getCallback);
 
             function getCallback(error,response,body){
-                if (error){
+                if (error) {
+                    var obj = JSON.parse(response.responseText);
+                    if (obj.httpStatusCode){
+                        savePost();
+                    }
 
-                }else{
-                    if (response.httpStatusCode){
-                        save("POST");
-                    }else{
-                        save("PUT");
+                } else {
+                    var obj = JSON.parse(response.responseText);
+                    if (obj.httpStatusCode) {
+                        savePost();
+                    } else {
+                        savePut();
                     }
                 }
             }
 
             importData(index+1,data,endpointName,notificationCallback);
 
-            function save(type){
+            function savePost(){
                 ajax.request( {
-                    type: type,
+                    type: "POST",
                     async: true,
                     contentType: "application/json",
                     url: baseURL + endpointName+"/"+uid,
@@ -72,6 +79,23 @@ export function trackerDataHandler(data,notificationCallback){
                 notificationCallback(error,response,{
                     domain_key : endpointName
                 },runningCount.getNo());
+                }
+            }
+
+            function savePut(){
+                ajax.request( {
+                    type: "PUT",
+                    async: true,
+                    contentType: "application/json",
+                    url: baseURL + endpointName+"/"+uid,
+                    data : JSON.stringify(dataObj)
+                }, saveCallback);
+
+                function saveCallback(error,response,body){
+
+                    notificationCallback(error,response,{
+                        domain_key : endpointName
+                    },runningCount.getNo());
                 }
             }
         }

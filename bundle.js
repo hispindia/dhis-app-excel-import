@@ -84639,23 +84639,29 @@
 	            }, getCallback);
 
 	            function getCallback(error, response, body) {
-	                if (error) {} else {
-	                    if (response.httpStatusCode) {
-	                        save("POST");
+	                if (error) {
+						var obj = JSON.parse(response.responseText);
+						if (obj.httpStatusCode){
+							savePost();
+						}
+					} else {
+						var obj = JSON.parse(response.responseText);
+	                    if (obj.httpStatusCode) {
+	                        savePost();
 	                    } else {
-	                        save("PUT");
+	                        savePut();
 	                    }
 	                }
 	            }
-
+debugger
 	            importData(index + 1, data, endpointName, notificationCallback);
 
-	            function save(type) {
+	            function savePost() {
 	                ajax.request({
-	                    type: type,
+	                    type: "POST",
 	                    async: true,
 	                    contentType: "application/json",
-	                    url: baseURL + endpointName + "/" + uid,
+	                    url: baseURL + endpointName + "/" ,
 	                    data: JSON.stringify(dataObj)
 	                }, saveCallback);
 
@@ -84666,6 +84672,24 @@
 	                    }, runningCount.getNo());
 	                }
 	            }
+
+				function savePut() {
+					ajax.request({
+						type: "PUT",
+						async: true,
+						contentType: "application/json",
+						url: baseURL + endpointName + "/" ,
+						data: JSON.stringify(dataObj)
+					}, saveCallback);
+
+					function saveCallback(error, response, body) {
+
+						notificationCallback(error, response, {
+							domain_key: endpointName
+						}, runningCount.getNo());
+					}
+				}
+
 	        }
 	    }
 	}

@@ -17,7 +17,7 @@ export function trackerDataHandler(data,notificationCallback){
             if (flag != "trackedEntityInstances"){
                 return;
             }
-            debugger
+          //  debugger
             importData(0,data.enrollments,"enrollments",notificationCallback);
             importData(0,data.events,"events",notificationCallback);
         }
@@ -29,9 +29,9 @@ export function trackerDataHandler(data,notificationCallback){
             }
             var dataObj = data[index];
             var uid;
-debugger
+//debugger
             if (endpointName == "trackedEntityInstances"){
-                debugger
+               // debugger
                 uid = dataObj.trackedEntityInstance;
             }else if (endpointName == "enrollments"){
                 uid = dataObj.enrollment;
@@ -53,13 +53,30 @@ debugger
                         savePost();
                     }
 
-                } else {
+                }
+                /*else {
                     var obj = JSON.parse(response.responseText);
                     if (obj.httpStatusCode) {
                         savePost();
                     } else {
                         savePut();
                     }
+                }*/
+                else{
+                    if(response.responseText !=undefined){
+                        var obj = JSON.parse(response.responseText);
+                        if (obj.httpStatusCode) {
+                            savePost();
+                        }
+
+                        else {
+                            savePut();
+                    }
+                    }
+                    else{
+                        savePut();
+                    }
+
                 }
             }
 

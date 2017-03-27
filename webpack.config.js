@@ -6,7 +6,6 @@ var webpack = require('webpack'),
     path = require('path');
 
 module.exports = {
-    debug: true,
     entry: {
         main: './app.js'
     },
@@ -24,7 +23,7 @@ module.exports = {
         loaders: [
            {
             test: /\.js$/,
-            loader: 'babel',
+            loader: 'babel-loader',
             exclude: /node_modules/,
 
             query: {

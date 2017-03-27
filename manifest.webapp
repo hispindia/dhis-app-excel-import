@@ -7,7 +7,7 @@
     }
   },
   "appType": "APP",
-  "name": "#XL Import",
+  "name": "Data Import APP",
   "version": "1.0.0",
   "description": "Excel based input interface for DHIS2",
   "developer": {
@@ -15,6 +15,6 @@
     "email": "harsh.atal@gmail.com"
   },
   "icons": {
-    "48": "icon.png"
+    "48": "/img/icon.jpg"
   }
 }

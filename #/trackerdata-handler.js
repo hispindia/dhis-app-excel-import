@@ -54,7 +54,7 @@ export function trackerDataHandler(data,notificationCallback){
                     }
 
                 }
-                /*else {
+              /*  else {
                     var obj = JSON.parse(response.responseText);
                     if (obj.httpStatusCode) {
                         savePost();
@@ -87,7 +87,7 @@ export function trackerDataHandler(data,notificationCallback){
                     type: "POST",
                     async: true,
                     contentType: "application/json",
-                    url: baseURL + endpointName+"/"+uid,
+                    url: baseURL + endpointName,
                     data : JSON.stringify(dataObj)
                 }, saveCallback);
 

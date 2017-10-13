@@ -840,7 +840,7 @@ dhis2API.user.prototype.getAPIObject = function(){
         "email": this.surname,
         "userCredentials": {
             "username": this.userCredentials.username,
-            "password": this.userCredentials.username,
+            "password": this.userCredentials.password,
             "userRoles": []
         },
         "organisationUnits": [ ],

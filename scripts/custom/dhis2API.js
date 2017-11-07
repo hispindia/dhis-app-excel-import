@@ -824,6 +824,7 @@ dhis2API.user = function(){
         this.surname=undefined;
         this.email= undefined;
         this.userCredentials = {
+	    "userInfo": {},
             "username": undefined,
             "password": undefined,
             "userRoles": [ ]
@@ -835,12 +836,14 @@ dhis2API.user = function(){
 
 dhis2API.user.prototype.getAPIObject = function(){
     var user = {
+	"id" : this.userCredentials.userInfo.id,
         "firstName": this.firstName,
         "surname": this.surname,
         "email": this.surname,
         "userCredentials": {
+            "userInfo": this.userCredentials.userInfo,
             "username": this.userCredentials.username,
-            "password": this.userCredentials.username,
+            "password": this.userCredentials.password,
             "userRoles": []
         },
         "organisationUnits": [ ],
@@ -937,6 +940,13 @@ dhis2API.user.prototype.excelImportPopulator = function(header,data){
                     })
                 }
 
+            break
+	     case FIELD_USER_INFO:
+              if (header[i].args){
+                    this.userCredentials.userInfo.id = header[i].args;
+                }else{
+                    this.userCredentials.userInfo.id = data[header[i].key];
+                }
                 break
         }
     }

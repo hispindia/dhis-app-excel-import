@@ -3,47 +3,20 @@
  */
 
 var excelImportAppServices = angular.module('excelImportAppServices', [])
-    .service('MetadataService',function($http){
+    .service('MetadataService',function(){
        return {
-           getOrgUnit : function(id){
+           getRootOrgUnit : function(){
                var def = $.Deferred();
                $.ajax({
                    type: "GET",
                    dataType: "json",
                    contentType: "application/json",
-                   url: '../../organisationUnits/'+id+".json",
+                   url: '../../organisationUnits?level=1&fields=id,name',
                    success: function (data) {
-                       def.resolve(data);
-                   }
-               });
-               return def;
-           },
-           getAllPrograms : function () {
-               var def = $.Deferred();
-               $.ajax({
-                   type: "GET",
-                   dataType: "json",
-                   contentType: "application/json",
-                   url: '../../programs.json?fields=id,name,withoutRegistration,programTrackedEntityAttributes[*],programStages[id,name,programStageDataElements[id,dataElement[id,name,optionSet[options[code,displayName]],sortOrder]]]&paging=false',
-                   success: function (data) {
-                       def.resolve(data);
-                   }
-               });
-               return def;
-           },
-           getSQLView : function(sqlViewUID,param){
-               var def = $.Deferred();
-               $.ajax({
-                   type: "GET",
-                   dataType: "json",
-                   contentType: "application/json",
-                   url: '../../sqlViews/'+sqlViewUID+"/data?"+param,
-                   success: function (data) {
-                       def.resolve(data);
+                       def.resolve(data.organisationUnits);
                    }
                });
                return def;
            }
-
-    }
+       }
     });

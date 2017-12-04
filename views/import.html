@@ -6,10 +6,10 @@
 <div id="mainPage">
     <h2></h2>
 
-    <label>Upload .xlsx file</label>
+    <label>Upload .xlsx or .csv file</label>
     <input type="file" id="fileInput">
 
-    <button ng-click="importBegins()">Import</button>
+    <button ng-click="getSet()">Import</button>
 
     <div ng-show="importSummary.outcome == 'error'">
      <label>{{importSummary.errorMessage}}</label>
@@ -35,7 +35,9 @@
     </div>
     <br>
     <div>
-        No of requests made : {{importSummary.requestCount}}
+        No of Requests made : {{requestStats.requestCount}}<br>
+        No of Successful requests : {{requestStats.successCount}}<br>
+        No of Failed requests : {{requestStats.errorCount}}
 
         <table class="table-bordered">
             <thead>
@@ -46,20 +48,18 @@
                 <th>HTTP Response</th>
                 <th>Conflict Details</th>
                 <th>Reference</th>
-
             </tr>
             </thead>
             <tbody ng-repeat="summaryItems in importSummary">
                 <tr>
-                    <td rowspan="{{summaryItems.length+1}}">{{summaryItems[0].row+1}}</td>
+                    <td rowspan="{{summaryItems.length+1}}"> {{summaryItems[0].row+2}}</td>
                 </tr>
                 <tr ng-repeat="item in summaryItems">
                     <td>{{item.domain}}</td>
                     <td>{{item.status}}</td>
                     <td>{{item.httpResponse.message}}</td>
                     <td><i ng-repeat="conflict in item.conflicts">{{conflict.object}} {{conflict.value}}</i> </td>
-                    <td>{{item.httpResponse.response.reference}}</td>
-
+                    <td>{{item.reference}}</td>
                 </tr>
             </tbody>
         </table>

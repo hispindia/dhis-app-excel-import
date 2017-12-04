@@ -1,0 +1,107 @@
+/**
+ * Created by harsh on 7/5/16.
+comments - 
+
+The API should be the source of all information.This includes getting to know the number of metadata in the system. What are the fields required 
+
+So, lets say we have to  REGISTER a person in tracker, and for this we need to make a object called tracked entity instance.
+Dictionary -
+Register a patient in the system : tracked entity instance
+Enroll a patient into a program : enrollment
+
+
+
+
+ */
+
+function importer(type,data){
+
+    var returnObject = {
+        outcome : ""
+    }
+
+    var importSummary = [];
+
+    if (data.length == 0){
+        returnObject.outcome = "error";
+        returnObject.errorMessage = "No Data Present";
+    }
+    switch(type){
+        case TRACKER_REGISTRATION_PLUS_ENROLLMENT :
+            return importData(TRACKER_PROGRAM_UID,TRACKER_TRACKED_ENTITY);
+            break;
+    }
+
+    function importData(){
+        var headerData = extractHeaderInformation(data[0]);
+            if (headerData.errorMessage){
+                return headerData;
+            }
+        var headerDataMapKeyWise = prepareIdToObjectMap(headerData,"key");
+	var headerDataMapTypeWise = prepareIdToObjectMap(headerData,"type");
+
+	
+        for (var i=0;i<data.length;i++){
+	    // create event
+	    //segregate attributes,and other fields
+	    var tei = new TrackedEntityInstance();
+
+	    var trackedEntityInstance = {
+		orgUnit : headerDataMap[TAG_ORGUNIT],
+		registrationDate : headerDataMap[TAG_REGISTRATION_DATE],
+		trackedEntity : headerDataMap[TAG_TRACKED_ENTITIES],
+		storedBy : "",
+		attributes : [],
+	    }
+	    
+	    headerDataMap[TAG_ORGUNIT];
+        }
+    }
+
+    function extractHeaderInformation(row1){
+        var headerMap = [];
+        for (var key in row1){
+            var strings = key.split(FIRST_DELIMITER);
+            if (strings[1]){
+                var typePlusUIDInfo = strings[1].split(SECOND_DELIMITER);
+                var item = {    key : key,
+                                type : undefined,/*enum[de,attr,registrationDate]*/
+                                uid : undefined};
+
+                item.type = typePlusUIDInfo[0];
+                if (item.type){
+                    if (UIDRequired(item.type)){
+
+                        if (typePlusUIDInfo[1]){
+                            item.uid = typePlusUIDInfo[1];
+                        }else{
+                            return makeError("error"," UID missing for "+key+".");
+                        }
+                    }
+                }else{
+                    return makeError("error"," Type of Metadata missing for "+key+".");
+                }
+
+            headerMap.push(item);
+            }else{
+                return makeError("error"," #XX.UID missing.Mapping information not present for "+key+".");
+            }
+        }
+        return headerMap;
+    }
+
+    function makeError(outcome,errorMessage){
+        returnObject.outcome = outcome;
+        returnObject.errorMessage = errorMessage;
+        return returnObject;
+    }
+
+    function UIDRequired(type){
+        switch (type){
+            case TAG_ATTRIBUTE :
+            case TAG_DATAELEMENT : return true
+            case TAG_REGISTRATION_DATE : return false
+            default : return true;
+        }
+    }
+}

@@ -200,7 +200,16 @@ function importHandler(headers,importData,notificationCallback) {
             notificationCallback(response);
 
             if (response.status == "OK"){
-                var teiUID = response.response.reference;
+		var teiUID = null;
+		
+		if (response.importStat.domain == "teiUpdate" ){
+		    // Update case
+		    teiUID = response.response.reference;             
+		}else{
+		    // New Case
+		    teiUID = response.response.importSummaries[0].reference;
+                }
+	
                 var tei = [{
                     orgUnit : orgUnit,
                     trackedEntityInstance : teiUID

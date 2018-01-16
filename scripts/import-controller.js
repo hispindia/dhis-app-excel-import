@@ -10,7 +10,9 @@ excelImport
                                               MetadataService){
 
 MetadataService.getRootOrgUnit().then(function(orgUnits){
-ROOT_OU_UID = orgUnits[0].id;
+    ROOT_OU_UID = orgUnits[0].id;
+// To Do
+    ROOT_OU_UID = "TndJXfbddEf";
 
 })
         $scope.xlsxFile = undefined;

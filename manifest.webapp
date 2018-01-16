@@ -1,1 +1,29 @@
-{"version":"0.1","name":"#Excel-Import","description":"Excel Importer","icons":{"16":"/img/excel-icon.png","48":"/img/excel-icon.png","128":"/img/excel-icon.png"},"developer":{"url":"http://dhis2.org","name":"HISP","company":null,"email":null},"activities":{"dhis":{"href":"*","namespace":null}},"folderName":null,"baseUrl":null,"launchUrl":null,"key":null,"launch_path":"index.html","installs_allowed_from":null,"default_locale":"en"}
+{
+    "activities": {
+        "dhis": {
+            "href": "*",
+            "namespace": null
+        }
+    },
+    "baseUrl": null,
+    "default_locale": "en",
+    "description": "Excel Importer",
+    "developer": {
+        "company": null,
+        "email": null,
+        "name": "HISP",
+        "url": "http://dhis2.org"
+    },
+    "folderName": null,
+    "icons": {
+        "128": "/img/excel-icon.png",
+        "16": "/img/excel-icon.png",
+        "48": "/img/excel-icon.png"
+    },
+    "installs_allowed_from": null,
+    "key": null,
+    "launchUrl": null,
+    "launch_path": "index.html",
+    "name": "#Excel-Import (2.27)",
+    "version": "0.1"
+}

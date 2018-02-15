@@ -1,0 +1,1024 @@
+
+<script type="text/javascript"  >
+ $(function () {
+        $("#dropdown1").change(function () {
+            if ($(this).val() == "dataElements")
+            {
+                $("#newpost1").show();
+
+            } else
+            {
+                $("#newpost1").hide();
+
+            }
+
+            if ($(this).val() == "users")
+            {
+                $("#newpost3").show();
+
+            } else
+            {
+                $("#newpost3").hide();
+
+            }
+            if ($(this).val() == "indicators")
+            {
+                $("#newpost4").show();
+
+            } else
+            {
+                $("#newpost4").hide();
+
+            }
+        });
+    });
+</script>
+
+<script>
+    function loadData()
+    {
+        var val=[],cc,dd;
+
+        var dropdown = document.getElementById("dropdown1");
+        var a = dropdown.options[dropdown.selectedIndex].value;
+
+        if (a == "selected")
+        {
+
+            alert("Please select option first!");
+
+        }
+        else {
+            $.getJSON("../../" + a + ".json?fields=*&paging=false", function (data) {
+
+
+                if (a == "dataElements")
+                {
+
+
+                    var x1=document.getElementById("getlimited1");
+                    for (var i = 0; i < x1.options.length; i++)
+                    {
+                        // EXTRACT VALUE FOR HTML HEADER.
+                        if(x1.options[i].selected ==true)
+                        {
+                            value=x1.options[i].value;
+                            val.push(value);
+
+                        }
+                    }
+                    cc=data.dataElements.length;
+                    dd=data.dataElements;
+
+
+                }
+                else if (a == "indicators") {
+
+                    var x4=document.getElementById("getlimited4");
+                    for (var i = 0; i < x4.options.length; i++)
+                    {
+                        // EXTRACT VALUE FOR HTML HEADER.
+                        if(x4.options[i].selected ==true)
+                        {
+                            value=x4.options[i].value;
+                            val.push(value);
+
+                        }
+                    }
+                    cc=data.indicators.length;
+                    dd=data.indicators;
+                }
+
+                else if (a == "users") {
+                    var x3=document.getElementById("getlimited3");
+                    for (var i = 0; i < x3.options.length; i++)
+                    {
+                        // EXTRACT VALUE FOR HTML HEADER.
+                        if(x3.options[i].selected ==true)
+                        {
+                            value=x3.options[i].value;
+                            val.push(value);
+
+                        }
+                    }
+                    cc=data.users.length;
+                    dd=data.users;
+                }
+                else if (a == "selected") {
+
+                    alert("Please select option first!");
+
+                }
+                if(dd=='')
+                {
+                    alert("No Data Found");
+                }
+                else {
+
+                    // CREATE DYNAMIC TABLE.
+                    var table = document.createElement("table");
+
+                    // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+
+                    var tr = table.insertRow(-1);                   // TABLE ROW.
+
+                    for (var i = 0; i < val.length; i++) {
+
+                        var th = document.createElement("th");      // TABLE HEADER.
+                        th.innerHTML = val[i];
+                        tr.appendChild(th);
+                    }
+
+                    // ADD JSON DATA TO THE TABLE AS ROWS.
+                    for (var i = 0; i < cc; i++) {
+
+                        tr = table.insertRow(-1);
+
+                        for (var j = 0; j < val.length; j++) {
+                            var tabCell = tr.insertCell(-1);
+                            tabCell.innerHTML = dd[i][val[j]];
+
+                        }
+                    }
+
+                    // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+                    var divContainer = document.getElementById("reporttable");
+                    divContainer.innerHTML = "";
+                    divContainer.appendChild(table);
+                }
+                var myVar;
+                (function myFunction() {
+                    document.getElementById("loader").style.display = "block";
+                    document.getElementById("overlay").style.display = "block";
+                    myVar = setTimeout(showPage, 3000);
+                })();
+                function showPage() {
+                    document.getElementById("loader").style.display = "none";
+                    document.getElementById("overlay").style.display = "none";
+                    document.getElementById("mydata").style.display = "block";
+                }
+            });
+
+
+
+
+
+
+        }
+
+
+    }
+</script>
+
+
+
+
+
+<script>
+
+    function getorganisationUnits() {
+
+        var orgid = "";
+        var value;
+        var val = ["level", "id", "name"];
+        //console.log(val);
+        var valnme = [];
+
+//            "../../'Orgid'.josn?fields=*,ancestors[id,name,level]&paging=false&order=name:asc" ,function (data)
+
+        $.getJSON("../../organisationUnits.json?fields=*,ancestors[id,name,level]&paging=false&order=name:asc", function (data) {
+            for (var i = 0; i < data.organisationUnits.length; i++) {
+                var val1 = data.organisationUnits[0].level;
+                var val2 = data.organisationUnits[1].level;
+                var val3 = data.organisationUnits[i].level;
+                if (val1 < val3) {
+                    value = val3;
+                }
+                if (val2 < val3) {
+                    value = val3;
+                }
+                var table = document.createElement("table");
+                table.setAttribute('class', 'tablesorter');
+
+
+                // CREATE HTML TABLE HEADER ROW USING THE EXTRACTED HEADERS ABOVE.
+                var header = table.createTHead();
+                var tr = header.insertRow(-1);                   // TABLE ROW.
+                for (var j = 1; j <= value; j++) {
+                    //var cell = tr.insertCell(-1);
+                    //cell.innerHTML = "Level"+":"+j;
+                    var th1 = document.createElement("th");  // TABLE HEADER.
+                    th1.innerHTML = "Level" + ":" + j;
+                    tr.appendChild(th1);
+                    var th2 = document.createElement("th");      // TABLE HEADER.
+                    th2.innerHTML = "Id";
+                    tr.appendChild(th2);
+                    var th3 = document.createElement("th");      // TABLE HEADER.
+                    th3.innerHTML = "Name";
+                    tr.appendChild(th3);
+
+                }
+                // $('#myTable').tablesorter();
+
+            }
+
+            var dd1 = data.organisationUnits;
+            var tbdy = table.createTBody();
+
+            for (var n1 = 0; n1 < data.organisationUnits.length; n1++) {
+                //var tbdy = document.createElement('tbody');
+                tr = tbdy.insertRow(-1);
+                var dd = data.organisationUnits[n1].ancestors;
+                for (var n = 0; n < data.organisationUnits[n1].ancestors.length; n++) {
+
+//                        console.log(val.length+"val");
+                    for (var m = 0; m < val.length; m++) {
+                        var tabCell = tr.insertCell(-1);
+                        tabCell.innerHTML = dd[n][val[m]];
+                        // console.log(dd[n][val[m]]);
+                        //sortTable(tabCell);
+                    }
+
+                }
+                for (var m1 = 0; m1 < val.length; m1++) {
+                    var tabCell1 = tr.insertCell(-1);
+                    tabCell1.innerHTML = dd1[n1][val[m1]];
+                }
+
+            }
+            // FINALLY ADD THE NEWLY CREATED TABLE WITH JSON DATA TO A CONTAINER.
+            var divContainer = document.getElementById("mydata");
+            divContainer.innerHTML = "";
+            divContainer.appendChild(table);
+            /** jQuery(function()
+             {
+                 var table = jQuery(".tablesorter");
+                 table.tablesorter();
+             });
+
+             **/
+            $(document).ready(function()
+                {
+                    $(".tablesorter").tablesorter();
+                }
+            );
+            var myVar;
+            (function myFunction() {
+                document.getElementById("loader").style.display = "block";
+                document.getElementById("overlay").style.display = "block";
+                myVar = setTimeout(showPage, 3000);
+            })();
+            function showPage() {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("mydata").style.display = "block";
+            }
+        });
+
+
+        // $(document).ready(function(){
+
+        //   });
+
+    }
+</script>
+
+
+
+<script type="text/javascript" >
+
+    function loadData1() {
+
+        var dropdown = document.getElementById("dropdown");
+
+        var a = dropdown.options[dropdown.selectedIndex].value;
+
+        if (a == "selected") {
+
+            alert("Please select option first!");
+
+        }
+        else {
+            $.getJSON("../../" + a + ".json?fields=*&paging=false", function (data) {
+
+                if (a == "dataElementGroups") {
+
+                    getElementGroup();
+                }
+
+                else if (a == "indicatorGroups") {
+                    getIndicatorGroups();
+
+                }
+                else if (a == "organisationUnits")
+                {
+                    getorganisationUnits();
+                }
+
+                else if (a == "organisationUnitGroups") {
+                    getOrgGroup();
+                }
+                else if (a == "userGroups") {
+                    getUserGroup();
+
+                }
+                else if (a == "selected") {
+
+                    alert("Please select option first!");
+
+                }
+
+
+                var myVar;
+                (function myFunction() {
+                    document.getElementById("loader").style.display = "block";
+                    document.getElementById("overlay").style.display = "block";
+                    myVar = setTimeout(showPage, 3000);
+                })();
+                function showPage() {
+                    document.getElementById("loader").style.display = "none";
+                    document.getElementById("overlay").style.display = "none";
+                    document.getElementById("mydata").style.display = "block";
+                }
+            });
+
+
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    function getIndicatorGroups()
+    {
+
+        $.getJSON("../../indicatorGroups.json?fields=*,indicators[lastUpdated,id,created,name,shortName,description,numerator,denominator]&paging=false", function (data) {
+
+
+            var k = data.indicatorGroups.length;
+
+            var gdata = data.indicatorGroups;
+            if(gdata=='')
+            {
+                alert("No data found");
+                var x = document.getElementById('mydata');
+                x.style.display = 'none';
+            }
+            else {
+
+                for (var i = 0; i < data.indicatorGroups.length; i++)
+                {
+
+
+                    var row1 = $("<tr><td colspan='7' style='text-align: center;color:white;font-weight: bold;padding:7px;background-color: #1B4F72'>Indicator Groups</td> " +
+                        "</tr><tr><td COLSPAN='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold '>ID" +
+                        "</td><td colspan='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold ' >CREATED" +
+                        "</td><td colspan='1' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold ' >LAST UPDATED" +
+                        "</td><td colspan='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold '>NAME</td></tr>");
+                    $("#reporttable").append(row1);
+
+
+
+                    var row4 = $(
+                        "<tr><td colspan='2' > " + data.indicatorGroups[i].id +
+                        "</td><td colspan='2'>" + data.indicatorGroups[i].created +
+                        "</td><td colspan='1'>" + data.indicatorGroups[i].lastUpdated +
+                        "</td><td colspan='2'>" + data.indicatorGroups[i].name + "</td></tr>" +
+                        "<tr><td colspan='7'style='background-color:#2980B9;padding: 3px;color:white;text-align: center;font-weight: bold'>Users</td> </tr>");
+                    $("#reporttable").append(row4);
+
+
+                    var row3 = $("<tr><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>ID" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold ' >CREATED" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold ' >LAST UPDATED" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>NAME" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>SHORT NAME" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>DESCRIPTION" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>NUMERATOR" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>DENOMINATOR" +
+                        "</td></tr>");
+
+                    $("#reporttable").append(row3);
+                    var len = data.indicatorGroups[i].indicators.length;
+                    for (var j = 0; j < len; j++) {
+
+                        var row4 = $(
+                            "<tr><td> " + data.indicatorGroups[i].indicators[j].id +///////
+                            "</td><td >" + data.indicatorGroups[i].indicators[j].created +//////
+                            "</td><td >" + data.indicatorGroups[i].indicators[j].lastUpdated +/////
+                            "</td><td >" + data.indicatorGroups[i].indicators[j].name +/////
+                            "</td><td >" + data.indicatorGroups[i].indicators[j].shortName +
+                            "</td><td >" + data.indicatorGroups[i].indicators[j].description +
+                            "</td><td >" + data.indicatorGroups[i].indicators[j].numerator +
+                            "</td><td >" + data.indicatorGroups[i].indicators[j].denominator +
+                            "</td></tr>");
+                        $("#reporttable").append(row4);
+                    }
+
+                }
+
+            }
+            var myVar;
+            (function myFunction() {
+                document.getElementById("loader").style.display = "block";
+                document.getElementById("overlay").style.display = "block";
+                myVar = setTimeout(showPage, 3000);
+            })();
+            function showPage() {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("mydata").style.display = "block";
+            }
+        });
+
+
+
+    }
+
+</script>
+<script type="text/javascript">
+    function getUserGroup() {
+
+
+
+        $.getJSON("../../userGroups.json?fields=*,users[lastUpdated,id,created,name,surname,firstName,lastCheckedInterpretations]&paging=false", function (data) {
+
+            var index = 1;
+            var k = data.userGroups.length;
+            //  var gdata = data.dataElementGroups;
+
+
+
+            var gdata = data.userGroups;
+            if(gdata=='')
+            {
+                alert("No data found");
+                var x = document.getElementById('mydata');
+                x.style.display = 'none';
+            }
+            else {
+                for (var i = 0; i < data.userGroups.length; i++) {
+
+                    var row1 = $("<tr><td colspan='7' style='text-align: center;color:white;font-weight: bold;padding:7px;background-color: #1B4F72'>User Groups</td> " +
+                        "</tr><tr><td COLSPAN='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold '>ID" +
+                        "</td><td colspan='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold ' >CREATED" +
+                        "</td><td colspan='1' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold ' >LAST UPDATED" +
+                        "</td><td colspan='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold '>NAME</td></tr>");
+                    $("#reporttable").append(row1);
+                    var row4 = $(
+                        "<tr><td colspan='2' > " + data.userGroups[i].id +
+                        "</td><td colspan='2'>" + data.userGroups[i].created +
+                        "</td><td colspan='1'>" + data.userGroups[i].lastUpdated +
+                        "</td><td colspan='2'>" + data.userGroups[i].name + "</td></tr>" +
+                        "<tr><td colspan='7'style='background-color:#2980B9;padding: 3px;color:white;text-align: center;font-weight: bold'>Users</td> </tr>");
+                    $("#reporttable").append(row4);
+
+
+                    var row3 = $("<tr><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>ID" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold ' >LAST CHECKED INTERPRETATION" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold ' >CREATED" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold ' >LAST UPDATED" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>NAME" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>FIRST NAME" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>SURNAME" +
+                        "</td></tr>");
+
+                    $("#reporttable").append(row3);
+                    var len = data.userGroups[i].users.length;
+                    for (var j = 0; j < len; j++) {
+                        var row4 = $(
+                            "<tr><td> " + data.userGroups[i].users[j].id +///////
+                            "</td><td> " + data.userGroups[i].users[j].lastCheckedInterpretations +//
+                            "</td><td >" + data.userGroups[i].users[j].created +//////
+                            "</td><td >" + data.userGroups[i].users[j].lastUpdated +/////
+                            "</td><td >" + data.userGroups[i].users[j].name +/////
+                            "</td><td >" + data.userGroups[i].users[j].firstName +
+                            "</td><td >" + data.userGroups[i].users[j].surname +
+                            "</td></tr>");
+                        $("#reporttable").append(row4);
+
+                    }
+                }
+
+            }
+            var myVar;
+            (function myFunction() {
+                document.getElementById("loader").style.display = "block";
+                document.getElementById("overlay").style.display = "block";
+                myVar = setTimeout(showPage, 3000);
+            })();
+            function showPage() {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("mydata").style.display = "block";
+            }
+        });
+
+
+
+    }
+
+</script>
+
+<script type="text/javascript">
+    function getOrgGroup() {
+
+
+
+        $.getJSON("../../organisationUnitGroups.json?fields=*,organisationUnits[id,code,created,dimensionItemType,shortName,lastUpdated,description,name,domainType,valueType,formName]&paging=false", function (data) {
+
+            var index = 1;
+            var k = data.organisationUnitGroups.length;
+            //  var gdata = data.dataElementGroups;
+            var gdata = data.organisationUnitGroups;
+            if(gdata=='')
+            {
+                alert("No data found");
+            }
+            else {
+                for (var i = 0; i < data.organisationUnitGroups.length; i++) {
+
+                    var row1 = $("<tr><td colspan='8' style='text-align: center;color:white;font-weight: bold;padding:7px;background-color: #1B4F72'>Organisation Unit Groups</td> " +
+                        "</tr><tr><td COLSPAN='1' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold '>ID" +
+                        "</td><td colspan='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold ' >CREATED" +
+                        "</td><td colspan='1' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold ' >SHORT NAME" +
+                        "</td><td colspan='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold ' >LAST UPDATED" +
+                        "</td><td colspan='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold '>NAME</td></tr>");
+                    $("#reporttable").append(row1);
+                    var row4 = $(
+                        "<tr><td colspan='1' > " + data.organisationUnitGroups[i].id +
+                        "</td><td colspan='2'>" + data.organisationUnitGroups[i].created +
+                        "</td><td colspan='1'>" + data.organisationUnitGroups[i].shortName +
+                        "</td><td colspan='2'>" + data.organisationUnitGroups[i].lastUpdated +
+                        "</td><td colspan='2'>" + data.organisationUnitGroups[i].name + "</td></tr>" +
+                        "<tr><td colspan='8'style='background-color:#2980B9;padding: 3px;color:white;text-align: center;font-weight: bold'>Organisation Units</td> </tr>");
+                    $("#reporttable").append(row4);
+
+
+                    var row3 = $("<tr><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>ID" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold ' >CREATED" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold ' >CODE" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold ' >LAST UPDATED" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>NAME" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>SHORT NAME" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>DIMENSION ITEM TYPE" +
+                        "</td></tr>");
+
+                    $("#reporttable").append(row3);
+                    var len = data.organisationUnitGroups[i].organisationUnits.length;
+                    for (var j = 0; j < len; j++) {
+                        var row4 = $(
+                            "<tr><td> " + data.organisationUnitGroups[i].organisationUnits[j].id +//
+                            "</td><td> " + data.organisationUnitGroups[i].organisationUnits[j].uuid +//
+                            "</td><td >" + data.organisationUnitGroups[i].organisationUnits[j].openingDate +//
+                            "</td><td >" + data.organisationUnitGroups[i].organisationUnits[j].code +//
+                            "</td><td >" + data.organisationUnitGroups[i].organisationUnits[j].lastUpdated +
+                            "</td><td >" + data.organisationUnitGroups[i].organisationUnits[j].name +
+                            "</td><td >" + data.organisationUnitGroups[i].organisationUnits[j].shortName +
+                            "</td><td >" + data.organisationUnitGroups[i].organisationUnits[j].dimensionItemType +
+                            "</td></tr>");
+                        $("#reporttable").append(row4);
+
+                    }
+                }
+
+            }
+            var myVar;
+            (function myFunction() {
+                document.getElementById("loader").style.display = "block";
+                document.getElementById("overlay").style.display = "block";
+                myVar = setTimeout(showPage, 5000);
+            })();
+            function showPage() {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("mydata").style.display = "block";
+            }
+        });
+
+
+
+    }
+
+</script>
+
+
+<script type="text/javascript">
+    function getElementGroup() {
+
+
+        $.getJSON("../../dataElementGroups.json?fields=*,dataElements[id,code,created,dimensionItemType,shortName,lastUpdated,description,name,domainType,valueType,formName]&paging=false", function (data) {
+
+            var index = 1;
+            var k = data.dataElementGroups.length;
+            //  var gdata = data.dataElementGroups;
+            var gdata = data.dataElementGroups;
+            if(gdata=='')
+            {
+                alert("No data found");
+                var x = document.getElementById('mydata');
+                x.style.display = 'none';
+            }
+            else {
+
+                for (var i = 0; i < data.dataElementGroups.length; i++) {
+
+                    var row1 = $("<tr><td colspan='10' style='text-align: center;color:white;font-weight: bold;padding:7px;background-color: #1B4F72'>Data elements Group</td> " +
+                        "</tr><tr><td COLSPAN='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold '>ID" +
+                        "</td><td colspan='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold ' >CREATED" +
+                        "</td><td colspan='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold ' >CODE" +
+                        "</td><td colspan='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold ' >LAST UPDATED" +
+                        "</td><td colspan='2' style='background-color: #aeb0b0  ;color: white;text-align: center;font-weight: bold '>NAME</td></tr>");
+                    $("#reporttable").append(row1);
+                    var row4 = $(
+                        "<tr><td colspan='2' > " + data.dataElementGroups[i].id +
+                        "</td><td colspan='2'>" + data.dataElementGroups[i].created +
+                        "</td><td colspan='2'>" + data.dataElementGroups[i].code +
+                        "</td><td colspan='2'>" + data.dataElementGroups[i].lastUpdated +
+                        "</td><td colspan='2'>" + data.dataElementGroups[i].name + "</td></tr>" +
+                        "<tr><td colspan='10'style='background-color:#2980B9;padding: 3px;color:white;text-align: center;font-weight: bold'>Data Elements</td> </tr>");
+                    $("#reporttable").append(row4);
+
+
+                    var row3 = $("<tr><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>ID" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold ' >CREATED" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold ' >CODE" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold ' >LAST UPDATED" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>DESCRIPTION" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>NAME" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>SHORT NAME" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>DOMAIN NAME" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>DIMENSION ITEM TYPE" +
+                        "</td><td style='background-color: #aeb0b0;color: white;text-align: center;font-weight: bold '>FORM NAME</td></tr>");
+
+                    $("#reporttable").append(row3);
+                    var len = data.dataElementGroups[i].dataElements.length;
+                    for (var j = 0; j < len; j++) {
+                        var row4 = $(
+                            "<tr><td> " + data.dataElementGroups[i].dataElements[j].id +
+                            "</td><td >" + data.dataElementGroups[i].dataElements[j].created +
+                            "</td><td >" + data.dataElementGroups[i].dataElements[j].code +
+                            "</td><td >" + data.dataElementGroups[i].dataElements[j].lastUpdated +
+                            "</td><td >" + data.dataElementGroups[i].dataElements[j].description +
+                            "</td><td >" + data.dataElementGroups[i].dataElements[j].name +
+                            "</td><td >" + data.dataElementGroups[i].dataElements[j].shortName +
+                            "</td><td >" + data.dataElementGroups[i].dataElements[j].domainType +
+                            "</td><td >" + data.dataElementGroups[i].dataElements[j].dimensionItemType +
+                            "</td><td >" + data.dataElementGroups[i].dataElements[j].formName + "</td></tr>");
+                        $("#reporttable").append(row4);
+
+                    }
+
+                }
+            }
+            var myVar;
+            (function myFunction() {
+                document.getElementById("loader").style.display = "block";
+                document.getElementById("overlay").style.display = "block";
+                myVar = setTimeout(showPage, 3000);
+            })();
+            function showPage() {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("mydata").style.display = "block";
+            }
+        });
+
+
+
+    }
+
+</script>
+<script>
+
+    function ExportToExcel(mydata)
+    {
+        var htmltable= document.getElementById('mydata');
+        var html = htmltable.outerHTML;
+        window.open('data:application/vnd.ms-excel,' + encodeURIComponent(html));
+        var htmltable2= document.getElementById('gname');
+        var html = htmltable2.outerHTML;
+        window.open('data:application/vnd.ms-excel,' + encodeURIComponent(html));
+    }
+
+    function printcontent(){
+
+        window.print();
+
+    }
+
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#getlimited1').multiselect({
+            includeSelectAllOption: true
+
+
+        });
+
+    });
+    $(document).ready(function() {
+
+        $('#getlimited3').multiselect({
+            includeSelectAllOption: true
+
+
+        });
+
+    });
+    $(document).ready(function() {
+
+        $('#getlimited4').multiselect({
+            includeSelectAllOption: true
+
+
+        });
+
+    });
+    $(document).ready(function() {
+        $('#getall_go').on('click', function() {
+            var url = 'views/reportForm.html';
+            $('#mydata').load(url + ' #mydata1');
+        });
+    });
+    $(document).ready(function() {
+        $('#geta_go').on('click', function() {
+            var url = 'views/reportForm.html';
+            $('#mydata').load(url + ' #mydata1');
+        });
+    });
+
+
+
+
+
+</script>
+
+
+
+
+
+<style>
+   table ,tr, td
+    {
+        width:100%;
+
+    }
+    td,th
+    {
+        border:1px solid black;
+
+    }
+    #row {
+        border: 1px solid black;
+    }
+    table, th, td
+    {
+        height:100%;
+        width:100%;
+        margin:10px 0;
+        padding:2px 4px;
+        font:15px Verdana;
+        background-color: #F4F6F7;
+    }
+    th {
+        border:1px solid black;
+
+        text-align: center;
+        font-weight:bold;
+        color:white;
+        height: 30px;
+        background-color:#1B4F72;
+    }
+    #mydata
+    {
+        margin-left: 10px;
+    }
+    /* Center the loader */
+    #loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        position:absolute;
+        left:45%;
+        top:35%;
+        display:none;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        z-index:5;
+    }
+
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Add animation to "page content" */
+    .animate-bottom {
+        position: relative;
+        -webkit-animation-name: animatebottom;
+        -webkit-animation-duration: 1s;
+        animation-name: animatebottom;
+        animation-duration: 1s
+    }
+
+    @-webkit-keyframes animatebottom {
+        from { bottom:-100px; opacity:0 }
+        to { bottom:0px; opacity:1 }
+    }
+
+    @keyframes animatebottom {
+        from{ bottom:-100px; opacity:0 }
+        to{ bottom:0; opacity:1 }
+    }
+
+    #overlay {
+        background-color:gray;
+        display: none;
+        z-index:4;
+        margin-bottom:-100px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.4;
+
+    }
+
+   #dropdown,#dropdown1
+   {
+       height: 30px;
+       font-size: 14px;
+       line-height: 1.0;
+       color: #555;
+       vertical-align: middle;
+       background-color: #fff;
+       background-image: none;
+       border: 1px solid #ccc;
+       border-radius:5px;
+       -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+       box-shadow: inset 0 1px 1px rgba(0,0,0,0.075);
+       -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+       transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s
+   }
+
+
+</style>
+
+
+
+
+
+<br>
+<br>
+<br>
+<div id="overlay"></div>
+<div  id="app" align="center" style="margin-top: -30px; text-align: left;">
+
+
+        <label style="padding-top: 0px;"><b style="font-size: 20px">Select Group </b></label>
+        <select id="dropdown"   style="margin-left: 70px" size="1" name="test">
+            <option value="selected"> Please Select Option</option>
+            <option value="dataElementGroups"> Data Element Groups</option>
+            <option value="indicatorGroups"> Indicators Groups</option>
+            <option value="organisationUnits"> Organisation Units</option>
+            <option value="organisationUnitGroups"> Organisation Unit groups</option>
+            <option value="userGroups"> Users Groups</option>
+        </select>
+        &nbsp&nbsp&nbsp
+
+        <input type="button" value="Go" id="getall_go" class="btn btn-primary"  onclick="loadData1()"><br><br>
+
+
+
+        <label style="padding-top: 0px;"><b style="font-size: 20px">Select Attribute </b></label>
+        <select id="dropdown1" style="margin-left:47px;padding-right: 26px" size="1" name="test"  >
+
+            <option value="selected"> Please Select Option</option>
+            <option value="dataElements"> Data Element </option>
+            <option value="indicators"> Indicators </option>
+            <option value="users"> Users </option>
+        </select>
+        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+
+
+    <div id="newpost1" style="display:none;text-align: left; width:900px; height: 30px;margin-left: 400px;margin-top: -32px">
+        <select id="getlimited1" style="color: #0000FF;" size="1"  multiple="multiple">
+
+            <!-- <option value="0">selected</option> -->
+            <option value="lastUpdated">lastUpdated</option>
+            <option value="id">id</option>
+            <option value="name">name</option>
+            <option value="domainType">domainType</option>
+            <option value="formName">formName</option>
+            <option value="href">href</option>
+            <option value="created">created</option>
+
+
+        </select>
+    </div>
+
+        <div id="newpost3" style="display:none;text-align: left; width:900px; height: 30px;margin-left: 400px;margin-top: -32px">
+            <select id="getlimited3" style="color: #0000FF;margin-left:-1000px" size="1"  multiple="multiple">
+
+                <!-- <option value="0">selected</option> -->
+                <option value="lastUpdated">lastUpdated</option>
+                <option value="id">id</option>
+                <option value="name">name</option>
+                <option value="surname">domainType</option>
+                <option value="firstName">formName</option>
+                <option value="created">created</option>
+
+
+            </select>
+        </div>
+        <div id="newpost4" style="text-align: left;display: none; width:900px; height: 30px;margin-left: 400px;margin-top: -32px">
+            <select id="getlimited4" style=" color: #0000FF;margin-left:-1000px" size="1"  multiple="multiple">
+
+                <!-- <option value="0">selected</option> -->
+                <option value="lastUpdated">Last Updated</option>
+                <option value="id">Id</option>
+                <option value="name">Name</option>
+                <option value="created">Created</option>
+                <option value="description">Description</option>
+                <option value="numerator">Numerator</option>
+                <option value="numeratorDescription">Numerator Description</option>
+                <option value="denominator">Denominator</option>
+            </select>
+        </div>
+
+<div>
+
+        <br><input type="button" value="Submit" id="get_go" style="margin-left: 200px;margin-top: 5px" class="btn btn-primary" onclick="loadData()"/>
+
+
+</div>
+
+        <div id="loader"></div>
+
+        <div align="left" style="margin-top: 1px">
+            <br>
+
+            <input type="button" class="btn btn-primary" style="width:150px" onclick="ExportToExcel()" value="Excel Download" />
+            &nbsp&nbsp
+            <input type="button" class="btn btn-primary"style="width: 150px;" onclick="printcontent()" value="Print" /><br>
+
+        </div>
+
+
+
+        <title>Convert JSON Data to HTML Table Example</title>
+    </div>
+
+
+
+    <div style="margin-top: 0px;" id="mydata">
+        <div id="gname" style="border: none !important;" >
+            <table id="reporttable"  style="text-align-all:left;" style=';border-collapse: collapse; text-align:center;'>
+
+            </table>
+        </div>
+        <div id="gname1" style="border: none !important;" >
+            <table id="reporttable" style="text-align-all:left;" style=';border-collapse: collapse; text-align:center;'>
+
+            </table>
+        </div>
+
+
+
+
+        <div style="margin-top: 0px;" id="mydata1" class="tablesorter">
+
+            <div id="gname" style="border: none !important;" >
+                <table id="reporttable"   columns="columns" style="text-align-all:left;" style=';border-collapse: collapse; text-align:center;'>
+
+
+                </table>
+            </div>
+            <div id="gname1"  style="border: none !important;" >
+                <table id="reporttable"  style="text-align-all:left;" style=';border-collapse: collapse; text-align:center;'>
+
+                </table>
+
+
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+</div>
+</div>

@@ -1,9 +1,8 @@
 /**
- * Created by hisp on 2/12/15.
+ * Created by Gourav & Wasib on 05/02/18.
  */
 
-var excelImportAppServices = angular.module('excelImportAppServices', [])
-    .service('MetadataService',function($http){
+var trackerReportsAppServices = angular.module('trackerReportsAppServices', []).service('MetadataService',function(){
        return {
            getOrgUnit : function(id){
                var def = $.Deferred();
@@ -11,7 +10,9 @@ var excelImportAppServices = angular.module('excelImportAppServices', [])
                    type: "GET",
                    dataType: "json",
                    contentType: "application/json",
-                   url: '../../organisationUnits/'+id+".json",
+                   //url: '../../organisationUnits/'+id+".json?fields=id,name,programs[id,name,programTrackedEntityAttributes[*],programStages[id,name,programStageDataElements[id,dataElement[id,name],sortOrder]]]",
+                  // url: '../../organisationUnits/'+id+".json?fields=id,name,programs[id,name,programTrackedEntityAttributes[*],programStages[id,name,programStageDataElements[id,dataElement[id,name,optionSet[options[code,displayName]]],sortOrder]]]&paging=false",
+                    url: '../../organisationUnits/'+id+".json?fields=id,name,dataSets[id,name,periodType],programs[id,name,programType]&paging=false",
                    success: function (data) {
                        def.resolve(data);
                    }
@@ -44,6 +45,5 @@ var excelImportAppServices = angular.module('excelImportAppServices', [])
                });
                return def;
            }
-
-    }
+       }
     });

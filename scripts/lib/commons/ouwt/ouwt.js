@@ -133,8 +133,8 @@ function Selection()
     };
 
     this.isSelected = function() {
-    	var ou = selection.getSelected();
-    	return ou && ou.length > 0;
+        var ou = selection.getSelected();
+        return ou && ou.length > 0;
     };
 
     this.setSelected = function( selected ) {
@@ -202,27 +202,27 @@ function Selection()
 
         // clear out old tree
         dhis2.ou.store.removeAll(OU_KEY).always(function() {
-          // set new tree
-          dhis2.ou.store.setAll(OU_KEY, ous).always(function() { 
-            def.resolve();
-          });
+            // set new tree
+            dhis2.ou.store.setAll(OU_KEY, ous).always(function() {
+                def.resolve();
+            });
         });
 
         return def.promise();
     };
 
     this.clearOrganisationUnits = function() {
-      organisationUnits = [];
+        organisationUnits = [];
 
-      var def = $.Deferred();
+        var def = $.Deferred();
 
-      dhis2.ou.store.removeAll(OU_KEY).always(function() {
-        dhis2.ou.store.removeAll(OU_PARTIAL_KEY).always(function() {
-          def.resolve();
+        dhis2.ou.store.removeAll(OU_KEY).always(function() {
+            dhis2.ou.store.removeAll(OU_PARTIAL_KEY).always(function() {
+                def.resolve();
+            });
         });
-      });
 
-      return def.promise();
+        return def.promise();
     };
 
     this.getOrganisationUnit = function( id ) {
@@ -325,12 +325,12 @@ function Selection()
                     var names = [];
 
                     $.each( selection.getSelected(), function( i, id ) {
-                    	var ou = organisationUnits[id];
+                        var ou = organisationUnits[id];
                         var name = !!ou ? ou.n : '';
                         ids.push( id );
                         names.push( name );
                     } );
-                    
+
                     $( "#ouwt_loader" ).hide();
                     $( "#orgUnitTree" ).trigger( "ouwtLoaded", [ids, names] );
                 } );
@@ -347,7 +347,7 @@ function Selection()
             }
 
             if( localUsername != remoteUsername ) {
-              return true;
+                return true;
             }
 
             if ( localRoots == null || localRoots.length == 0 ) {
@@ -386,9 +386,9 @@ function Selection()
                     selection.clearSelected();
 
                     selection.clearOrganisationUnits().always(function() {
-                      selection.setOrganisationUnits( data.organisationUnits ).done(function() {
-                          sync_and_reload();
-                      });
+                        selection.setOrganisationUnits( data.organisationUnits ).done(function() {
+                            sync_and_reload();
+                        });
                     });
                 } ).fail( function() {
                     sync_and_reload();
@@ -473,14 +473,14 @@ function Selection()
                 });
             }
 
-          selection.busy( true );
+            selection.busy( true );
 
-          if( selection.getSelected() && selection.getSelected().length === 0 ) {
-        	  setTimeout(doSync, 1000); // Workaround for indexeddb slowness
-          } 
-          else {
-        	  doSync();
-          }
+            if( selection.getSelected() && selection.getSelected().length === 0 ) {
+                setTimeout(doSync, 1000); // Workaround for indexeddb slowness
+            }
+            else {
+                doSync();
+            }
         }
     };
 
@@ -604,11 +604,11 @@ function Selection()
                 ids.push( item );
                 names.push( name );
             } );
-            
+
             $( document ).trigger( dhis2.ou.event.orgUnitSelected, [ids, names, children] );
-            
+
             if( typeof listenerFunction === 'function') {
-            	listenerFunction( ids, names, children );
+                listenerFunction( ids, names, children );
             }
         } else {
             selected = selected[0];
@@ -626,7 +626,7 @@ function Selection()
                 $( document ).trigger( dhis2.ou.event.orgUnitSelected, [ids, names, children] );
 
                 if( typeof listenerFunction === 'function') {
-                	listenerFunction( ids, names, children );
+                    listenerFunction( ids, names, children );
                 }
             }
         }
@@ -638,16 +638,16 @@ function Selection()
     }
 
     this.scrollToSelected = function() {
-    	var ou = selection.getSelected();
+        var ou = selection.getSelected();
 
-    	if ( ou && ou.length ) {
-    		$( "#orgUnitTree" ).scrollTop( 0 );
-    		var tagId = "#" + getTagId( ou[0] );
-    		var tagOffset = $( tagId ).offset().top;
-    		var treeOffset = $( "#orgUnitTree" ).offset().top;
-    		var offset = tagOffset - treeOffset;
-    		$( "#orgUnitTree" ).animate( { scrollTop: offset }, 300 );
-    	}
+        if ( ou && ou.length ) {
+            $( "#orgUnitTree" ).scrollTop( 0 );
+            var tagId = "#" + getTagId( ou[0] );
+            var tagOffset = $( tagId ).offset().top;
+            var treeOffset = $( "#orgUnitTree" ).offset().top;
+            var offset = tagOffset - treeOffset;
+            $( "#orgUnitTree" ).animate( { scrollTop: offset }, 300 );
+        }
     };
 
     this.findByName = function() {
@@ -747,16 +747,16 @@ function Subtree() {
     var expandTreeAtOrgUnit = function( ou, select ) {
         select = select || false;
 
-      if( organisationUnits[ou] == null ) {
-          subtree.ajaxGetLeaf(ou).done(function( data ) {
-            $.extend( organisationUnits, data.organisationUnits);
+        if( organisationUnits[ou] == null ) {
+            subtree.ajaxGetLeaf(ou).done(function( data ) {
+                $.extend( organisationUnits, data.organisationUnits);
 
-            if(organisationUnits[ou]) {
-              expandTreeAtOrgUnit(ou, select);
-            }
-          });
+                if(organisationUnits[ou]) {
+                    expandTreeAtOrgUnit(ou, select);
+                }
+            });
 
-          return;
+            return;
         }
 
         var ouEl = organisationUnits[ou];
@@ -799,7 +799,7 @@ function Subtree() {
         } );
 
         if( select ) {
-          selectOrgUnit(ou);
+            selectOrgUnit(ou);
         }
     };
 

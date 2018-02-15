@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/excel-import.iml" filepath="$PROJECT_DIR$/.idea/excel-import.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/TrackerApp.iml" filepath="$PROJECT_DIR$/.idea/TrackerApp.iml" />
     </modules>
   </component>
 </project>

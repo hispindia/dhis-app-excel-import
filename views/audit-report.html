@@ -1,0 +1,184 @@
+<div id="leftBar">
+    <d2-left-bar></d2-left-bar>
+
+    <div id="orgUnitTree">
+        <ul>
+        </ul>
+    </div>
+</div>
+
+<div class="row" id="mainPage">
+    <div class="col-sm-8 col-md-6">
+        <legend>e-Aushadhi Stock Data Import</legend>
+        <table class="table table-borderless table-striped">
+
+            <tr>
+                <td>{{'orgUnitLabel' | translate}}<font color="red">*</font></td>
+                <td>
+                    <input type="text" class="form-control" name="selectedDistrict" id="selectedDistrict" ng-model="selectedDistrict" value="{{selectedOrgUnit.name|| 'please_select'| translate}}" ng-disabled="true">
+                </td>
+            </tr>
+
+
+            <!-- <tr>
+                <td>{{'orgUnitLabel' | translate}}
+                    <font color="red">*</font>
+                </td>
+                <td class='absorbing-column'>
+                    <select name="selectedDistrict" id="selectedDistrict" ng-model="selectedDistrict" class="form-control" ng-options="district.name for district in districts | orderBy: 'name'"
+                        ng-change="loadDataSets(selectedDistrict.id)">
+                        <option value="">Select District</option>
+                    </select>
+                </td>
+            </tr> -->
+            <tr>
+                <td>
+                    {{'Select Data Set'| translate}}
+                    <font color="red">*</font>
+                </td>
+                <td class='col-sm-4 col-md-3'>
+                    <select ng-model="selectedProgram.dataset" ng-change="getAllPrograms(selectedProgram.dataset)" class="form-control" ng-options="dataSet.name for dataSet in dataSets | orderBy: 'name'">
+                        <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
+                        <option value="">Select Data Set</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Select Period
+                    <font color="red">*</font>
+                </td>
+                <td class='col-sm-4 col-md-3'>
+                    <select ng-model="selectedProgram1.name" x-ng-change="getPeriod(selectedProgram1.name)" id="importPeriod" class="form-control">
+                        <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
+                        <option value="">Select Period</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td class='col-sm-4 col-md-3'>
+                    {{'Upload .xlsx file'| translate}}
+                </td>
+                <td class='col-sm-4 col-md-3'>
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="file" id="fileInput" value="">
+                </td>
+                <td class='col-sm-4 col-md-3'>
+                    <button class="btn btn-primary" style="margin-left: 90px" ng-disabled='!selectedProgram1' ng-click="checkFile(selectedProgram.dataset, selectedProgram1.name )">Import</button>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <p><b>Response Summary</b></p>
+        <div id="response"></div>
+
+        <!-- <div class="col-md-6 trim">
+             <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, selectedProgram);showLoad();" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>
+            <input type="button" style="margin-left: 300px" id="getall_go" class="btn btn-primary" ng-click="generateReport(selectedOrgUnit,selectedProgram1,selectedProgram)"
+                value="Generate Report">
+            <input type="button" style="margin-left: 150px; margin-top: -52px" value="Excel Download" ng-click="ExportToExcel(tabledata)"
+                class="btn btn-primary">
+            <input type="button" style="margin-top: -88px;margin-left: 70px" value="Print" ng-click="printDiv(tabledata)" id="printme"
+                class="btn btn-primary">
+
+        </div> -->
+
+    </div>
+    <style>
+        #reporttable {
+            width: 100%;
+
+        }
+
+        .arrow-up {
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+
+            border-bottom: 5px solid black;
+        }
+
+        .arrow-down {
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+
+            border-top: 20px solid #f00;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            $('#getall_go').on('click', function () {
+                var url = 'views/audit-report.html';
+                $('#tabledata').load(url + ' #tabledata1');
+            });
+        });
+
+    </script>
+    <div id="tabledata" style=" margin-top: 250px;width:100%;height:200px;">
+        <table id="reporttable" class="tablesorter" style="text-align: center"></table>
+    </div>
+
+    <div id="tabledata1" style=" margin-top: 250px;width:100%;height:200px;">
+        <table id="reporttable" class="tablesorter" style="text-align: center"></table>
+    </div>
+
+
+
+
+
+
+</div>
+
+<div class="row" ng-if="selectedOrgUnit.programs.length > 0 && !selectedProgram">
+    <div class="col-sm-8 col-md-6 vertical-spacing">
+        <div class="alert alert-warning">{{'please_select_program_report'| translate}}</div>
+    </div>
+</div>

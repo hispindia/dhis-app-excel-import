@@ -1,0 +1,113 @@
+<div id="leftBar">
+    <d2-left-bar></d2-left-bar>
+
+    <div id="orgUnitTree">
+        <ul>
+        </ul>
+    </div>
+</div>
+
+<div class="row" id="mainPage">
+    <div class="col-sm-8 col-md-6"  >
+        <legend>Track Entity Audit</legend>
+        <table class="table table-borderless table-striped">
+            <tr>
+                <td>{{'orgUnitLabel' | translate}}</td>
+                <td>
+                    <input type="text" class="form-control" value="{{selectedOrgUnit.name|| 'please_select'| translate}}" ng-disabled="true">
+                </td>
+            </tr>
+            <tr>
+                <td >
+                    {{'Select Program Name'| translate}}
+                </td>
+                <td class='col-sm-4 col-md-3'>
+                    <select id="programsel" ng-model="selectedProgram.dataset"  x-ng-change="getAllPrograms(selectedOrgUnit,selectedProgram.dataset)"  class="form-control"  ng-options="program.name for program in programs | orderBy: 'name'">
+                        <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
+                        <option value="">Select Program Name</option>
+                    </select>
+                </td>
+
+            </tr>
+            <tr>
+                <td >
+                    Select Name
+                </td>
+                <td class='col-sm-4 col-md-3'>
+                    <select  ng-model="selectedEntity.dataset" id="sel1"  x-ng-change="geteventDate(selectedEntity.dataset)" class="form-control"  ng-options="program.value for program in entname | orderBy: 'value'">
+                        <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
+                        <option value=""> Select Name</option>
+                    </select>
+                </td>
+
+            </tr>
+            <tr>
+                <td >
+                    Select Event Date
+                </td>
+                <td class='col-sm-4 col-md-3'>
+                    <select  ng-model="selectedStage.dataset" id="sel2" class="form-control"  ng-options="program.eventDate.substring(0,10) group by program.programStage for program in eventdate | orderBy: 'eventDate'">
+                        <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
+                        <option value=""> Select Event Date</option>
+                    </select>
+                </td>
+
+            </tr>
+
+        </table>
+
+
+
+        <div class="col-md-6 trim" >
+            <!-- <button type="button" class="btn btn-primary" ng-click="generateReport(selectedProgram, selectedProgram);showLoad();" ng-disabled="!selectedProgram">{{'generate_report'| translate}}</button>-->
+            <input type="button" style="margin-left: 300px" id="getall_go" class="btn btn-primary" ng-click="generateReport(selectedOrgUnit,selectedProgram,selectedEntity,selectedStage)" value="Generate Report">
+            <input type="button" style="margin-left: 150px; margin-top: -52px" value="Excel Download" ng-click="ExportToExcel(tabledata)" class="btn btn-primary">
+            <input type="button"  style="margin-top: -88px;margin-left: 70px" value="Print" ng-click="printDiv(tabledata)" id="printme"class="btn btn-primary">
+
+        </div>
+
+    </div>
+    <style>
+        #reporttable
+        {
+            width:100%;
+
+        }
+
+    </style>
+    <script>
+        $(document).ready(function() {
+            $('#getall_go').on('click', function() {
+                var url = 'views/audit-report.html';
+                $('#tabledata').load(url + ' #tabledata1');
+            });
+        });
+    </script>
+    <div id ="tabledata" style=" margin-top: 250px;width:100%;height:200px;">
+        <table id="reporttable" class="tablesorter" style="text-align: center"></table>
+    </div>
+    <div id ="tabledata1" style=" margin-top: 250px;width:100%;height:200px;">
+        <table id="reporttable" class="tablesorter" style="text-align: center"></table>
+    </div>
+
+
+
+</div>
+
+<div class="row" ng-if="selectedOrgUnit.programs.length > 0 && !selectedProgram">
+    <div class="col-sm-8 col-md-6 vertical-spacing">
+        <div class="alert alert-warning">{{'please_select_program_report'| translate}}</div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+

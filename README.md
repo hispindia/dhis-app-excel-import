@@ -1,3 +1,1 @@
-# Excel Importer
-  
- Docs.
+# Excel Import app for aggregate data without any mapping.

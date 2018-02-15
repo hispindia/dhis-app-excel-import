@@ -950,7 +950,6 @@ a:active {
     z-index: 2000; //has to be greater than bootsrap's modal z-index
 }
 
-//Necessary to override the .panel-group .panel { overflow: hidden; } in bootstrap.
 .panel-group .panel {
     overflow: visible;
 }
@@ -1183,4 +1182,11 @@ input, button, select, textarea {
     font-weight: bold;
     cursor: default;
     width: 100%;
+}
+
+.table-special table>tr>td{
+    border-left: 1pt solid black;;
+    border-right: 1pt solid black;;
+    border-top: 1pt solid black;;
+    border-bottom:1pt solid black;
 }

@@ -258,7 +258,8 @@ msfReportsApp.controller('AuditController', function ($rootScope, $scope, $timeo
             $.getJSON("../../dataSets/" + DataSet + ".json?fields=periodType", function (d) {
                 var periodType = d.periodType;
                 var today = new Date();
-                var stDate = "01/01/" + "2014";
+                var lastyear = today.getFullYear() - 1;
+                var stDate = "01/01/" + lastyear;
                 var latestMonth1 = today.getMonth() + 1;
                 if (latestMonth1 < 10) {
                     latestMonth = "0" + latestMonth1;
@@ -426,8 +427,6 @@ msfReportsApp.controller('AuditController', function ($rootScope, $scope, $timeo
             newp = ms + " " + period.substring(0, 4);
         }
         return newp;
-
-
     }
     $scope.quater = function (period) {
         var ms = [], newp;

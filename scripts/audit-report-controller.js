@@ -19,10 +19,12 @@ msfReportsApp.directive('calendar', function () {
     };
 });
 
+
+
 msfReportsApp.controller('AuditController', function ($rootScope, $scope, $timeout, MetadataService) {
 
 
-    var url1 = "../../organisationUnitGroups/G0QcUxkwzf7.json?fields=id,name,code,organisationUnits[id,name,code]&paging=false";
+    var url1 = "../../organisationUnitGroups/G0QcUxkwzf7.json?fields=id,name,shortName,organisationUnits[id,name,shortName]&paging=false";
     $.get(url1, function (data1) {
         $scope.districts = [];
 
@@ -30,6 +32,8 @@ msfReportsApp.controller('AuditController', function ($rootScope, $scope, $timeo
             $scope.districts.push(data1.organisationUnits[a]);
         }
     });
+
+
 
     $scope.loadDataSets = function (selectedDistrict) {
 
@@ -45,7 +49,7 @@ msfReportsApp.controller('AuditController', function ($rootScope, $scope, $timeo
         });
 
         $scope.basicUrl = "../../sqlViews/";
-        $scope.level6SQLid = 'OgpIXzYC2fz';
+        $scope.level6SQLid = 'oqBv1SqYitb';
 
         var url3 = $scope.basicUrl + $scope.level6SQLid + "/data.json?";
         url3 += "var=districtUid:" + selectedDistrict;
@@ -56,36 +60,37 @@ msfReportsApp.controller('AuditController', function ($rootScope, $scope, $timeo
             for (var i in $scope.tempAllOrgUnitList.rows) {
                 $scope.phcOrgUnits.push($scope.tempAllOrgUnitList.rows[i]);
             }
-         //   console.log($scope.phcOrgUnits);
+            //   console.log($scope.phcOrgUnits);
         });
 
     }
 
-    $scope.getAllPrograms = function (selectedProgram) {
+    // $scope.getAllPrograms = function (selectedProgram) {
 
-        if (selectedProgram != undefined || selectedProgram != null) {
+    //     if (selectedProgram != undefined || selectedProgram != null) {
 
-            $scope.DataSet = selectedProgram.id;
+    //         $scope.DataSet = selectedProgram.id;
 
-            var url4 = '../../dataSets/' + $scope.DataSet + ".json?fields=dataSetElements[dataElement[id,name,code]]";
-            $.get(url4, function (data4) {
-                $scope.tempAllDataElements = data4.dataSetElements;
+    //         var url4 = '../../dataSets/' + $scope.DataSet + ".json?fields=dataSetElements[dataElement[id,name,code]]";
+    //         $.get(url4, function (data4) {
+    //             $scope.tempAllDataElements = data4.dataSetElements;
 
-                $scope.dataElements = [];
+    //             $scope.dataElements = [];
 
-                for (var i in $scope.tempAllDataElements) {
-                    $scope.dataElements.push($scope.tempAllDataElements[i].dataElement);
-                }
-            });
+    //             for (var i in $scope.tempAllDataElements) {
+    //                 $scope.dataElements.push($scope.tempAllDataElements[i].dataElement);
+    //             }
+    //         });
 
-            generatePeriods($scope.DataSet);
-        }
-    }
+    //         generatePeriods($scope.DataSet);
+    //     }
+    // }
+
 
 
 
     $scope.checkFile = function (selectedDataSet, selectedPeriod) {
-        if ((selectedDataSet == undefined) || (selectedPeriod == undefined)) {
+        if (selectedPeriod == undefined) {
             alert("Please select the mandatory fields");
         }
         else {
@@ -214,6 +219,7 @@ msfReportsApp.controller('AuditController', function ($rootScope, $scope, $timeo
         //getAllPrograms();
         $scope.selectedOrgUnitUid = selection.getSelected();
         loadPrograms();
+        
     }, false);
 
     loadPrograms = function () {
@@ -227,7 +233,24 @@ msfReportsApp.controller('AuditController', function ($rootScope, $scope, $timeo
                 }
             });
         });
+
+        generateDataElements();
     }
+
+    generateDataElements = function () {
+    $scope.dataSetId = 'mwm9DF8OumI';
+        var url4 = '../../dataSets/' + $scope.dataSetId + ".json?fields=dataSetElements[dataElement[id,name,code]]";
+                $.get(url4, function (data4) {
+                    $scope.tempAllDataElements = data4.dataSetElements;
+    
+                    $scope.dataElements = [];
+    
+                    for (var i in $scope.tempAllDataElements) {
+                        $scope.dataElements.push($scope.tempAllDataElements[i].dataElement);
+                    }
+                });
+        generatePeriods($scope.dataSetId);
+        }
 
     generatePeriods = function (DataSet) {
 

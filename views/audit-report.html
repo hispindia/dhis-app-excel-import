@@ -13,9 +13,12 @@
         <table class="table table-borderless table-striped">
 
             <tr>
-                <td>{{'orgUnitLabel' | translate}}<font color="red">*</font></td>
+                <td>{{'orgUnitLabel' | translate}}
+                    <font color="red">*</font>
+                </td>
                 <td>
-                    <input type="text" class="form-control" name="selectedDistrict" id="selectedDistrict" ng-model="selectedDistrict" value="{{selectedOrgUnit.name|| 'please_select'| translate}}" ng-disabled="true">
+                    <input type="text" class="form-control" name="selectedDistrict" id="selectedDistrict" ng-model="selectedDistrict" value="{{selectedOrgUnit.name|| 'please_select'| translate}}"
+                        ng-disabled="true">
                 </td>
             </tr>
 
@@ -36,12 +39,17 @@
                     {{'Select Data Set'| translate}}
                     <font color="red">*</font>
                 </td>
-                <td class='col-sm-4 col-md-3'>
-                    <select ng-model="selectedProgram.dataset" ng-change="getAllPrograms(selectedProgram.dataset)" class="form-control" ng-options="dataSet.name for dataSet in dataSets | orderBy: 'name'">
-                        <!--ng-disabled="selectedOrgUnit.programs.length < 1">-->
+
+                    <td class='col-sm-4 col-md-3'>
+                        <input type="text" class="form-control" value="{{'MH - Stock position'| translate}}" ng-disabled="true">
+                    </td>
+
+                <!-- <td class='col-sm-4 col-md-3'>
+                    <select ng-model="selectedProgram.dataset" ng-change="getAllPrograms(selectedProgram.dataset)" ng-disabled="true" class="form-control" ng-options="dataSet.name for dataSet in dataSets | orderBy: 'name'">
+                        
                         <option value="">Select Data Set</option>
                     </select>
-                </td>
+                </td> -->
             </tr>
             <tr>
                 <td>
@@ -75,7 +83,9 @@
         </table>
         <br>
         <br>
-        <p><b>Response Summary</b></p>
+        <p>
+            <b>Response Summary</b>
+        </p>
         <div id="response"></div>
 
         <!-- <div class="col-md-6 trim">

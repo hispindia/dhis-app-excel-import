@@ -42,13 +42,13 @@ dhis2API.trackedEntityInstance.prototype.excelImportPopulator = function(header,
 
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
-            case FIELD_ORG_UNIT :
-                if (header[i].args){
-                    this.orgUnit = header[i].args;
-                }else{
-                    this.orgUnit = data[header[i].key];
-                }
-                break
+            // case FIELD_ORG_UNIT :
+            //     if (header[i].args){
+            //         this.orgUnit = header[i].args;
+            //     }else{
+            //         this.orgUnit = data[header[i].key];
+            //     }
+            //     break
             case FIELD_TRACKED_ENTITY:
                 if (header[i].args){
                     this.trackedEntity = header[i].args;
@@ -207,11 +207,12 @@ dhis2API.enrollment.prototype.excelImportPopulatorTemp = function (header,data,t
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
             case FIELD_ORG_UNIT :
-                if (header[i].args){
-                    this.orgUnit = header[i].args;
-                }else{
-                    this.orgUnit = data[header[i].key];
-                }
+                // if (header[i].args){
+                //     this.orgUnit = header[i].args;
+                // }else{
+                //     this.orgUnit = data[header[i].key];
+                // }
+                this.orgUnit = tei.orgUnit;
                 break
             case FIELD_PROGRAM:
                 if (header[i].args){
@@ -413,13 +414,13 @@ dhis2API.event.prototype.excelImportPopulatorTemp = function(header,data,tei){
 
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
-            case FIELD_ORG_UNIT :
-                if (header[i].args){
-                    this.orgUnit = header[i].args;
-                }else{
-                    this.orgUnit = data[header[i].key];
-                }
-                break
+            // case FIELD_ORG_UNIT :
+            //     if (header[i].args){
+            //         this.orgUnit = header[i].args;
+            //     }else{
+            //         this.orgUnit = data[header[i].key];
+            //     }
+            //     break
             case FIELD_PROGRAM:
                 if (header[i].args){
                     this.program = header[i].args;

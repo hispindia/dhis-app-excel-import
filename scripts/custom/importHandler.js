@@ -13,8 +13,6 @@ function register(headers,importData,notificationCallBack){
         createTei(headers,index);
                     
     }
-
-    
  
      function createTei(headers,index){
          var header;
@@ -26,7 +24,10 @@ function register(headers,importData,notificationCallBack){
         }
                 
          //var index = 0;
-         var orgUnit = importData[index][header[getIndex(FIELD_ORG_UNIT,header)].key];
+         //var orgUnit = importData[index][header[getIndex(FIELD_ORG_UNIT,header)].key];
+         var orgCode = importData[index][header[getIndex(FIELD_ORG_UNIT,header)].key];
+        var orgUnit = getOuIdByCode(orgCode);
+
          var tei = new dhis2API.trackedEntityInstance();
          tei.excelImportPopulator(header, importData[index],orgUnit);
          tei.POST(teiSuccessCallback,teiFailedCallback,index,index,headers);
@@ -124,6 +125,7 @@ function register(headers,importData,notificationCallBack){
     }
 
     function enrollmentFailedCallback(response){
+        notificationCallBack(response);
         console.log(response);
     }
 
@@ -158,6 +160,37 @@ function register(headers,importData,notificationCallBack){
     function eventSuccessCallback(response){
         notificationCallBack(response);
         console.log(response)
+    }
+
+    function getOuIdByCode(code) {
+      //  var def = $.Deferred();
+      var ouId = undefined;
+        // var url= '../../organisationUnits?fields=id,name&filter=code:eq:' + code;
+        // $.get(url, function (data) { 
+        //         for(var key in data.organisationUnits)
+        //         {
+        //             ouId = data.organisationUnits[key].id;
+        //             break;
+        //         }
+        //     });
+        //     return ouId;
+
+         $.ajax({
+             type: "GET",
+             dataType: "json",
+             async : false,
+             contentType: "application/json",
+             url: '../../organisationUnits?fields=id,name&filter=code:eq:' + code,
+             success: function (data) {
+                 for(var key in data.organisationUnits)
+                 {
+                     ouId =  data.organisationUnits[key].id;
+                     break;
+                 }
+                
+             }
+         });
+         return ouId;
     }
  }
 

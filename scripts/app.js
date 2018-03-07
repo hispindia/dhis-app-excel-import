@@ -18,7 +18,7 @@ var dataImportApp = angular.module('dataImportApp',['ui.bootstrap',
 .config(function($routeProvider,$translateProvider){
         $routeProvider.when('/', {
             templateUrl:'views/data-import.html',
-            controller: 'AuditController'
+            controller: 'DataImportController'
         }).otherwise({
             redirectTo : '/'
         });

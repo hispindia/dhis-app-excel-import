@@ -1,5 +1,5 @@
 //Controller for column show/hide
-msfReportsApp.controller('LeftBarMenuController',
+eAushadhiStockDataImportApp.controller('LeftBarMenuController',
         function($scope,$location) {
 
         $scope.showAuditReport = function(){

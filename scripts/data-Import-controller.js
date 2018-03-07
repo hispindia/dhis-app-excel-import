@@ -3,7 +3,7 @@
  */
 //http://localhost:8080/fpai/api/dataValueSets.json?dataSet=S11S5cvcCkR&period=2016&orgUnit=oCL6lUtM3bB&paging=false
 //http://localhost:8080/fpai/api/audits/dataValue.json?de=Qn3Yf4iOy63
-msfReportsApp.directive('calendar', function () {
+eAushadhiStockDataImportApp.directive('calendar', function () {
     return {
         require: 'ngModel',
         link: function (scope, el, attr, ngModel) {
@@ -21,7 +21,7 @@ msfReportsApp.directive('calendar', function () {
 
 
 
-msfReportsApp.controller('AuditController', function ($rootScope, $scope, $timeout, MetadataService) {
+eAushadhiStockDataImportApp.controller('dataImportController', function ($rootScope, $scope, $timeout, MetadataService) {
 
 
     var url1 = "../../organisationUnitGroups/G0QcUxkwzf7.json?fields=id,name,shortName,organisationUnits[id,name,shortName]&paging=false";

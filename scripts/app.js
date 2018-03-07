@@ -2,7 +2,7 @@
  * Created by Gourav & Wasib on 05/02/18.
  */
 
-var msfReportsApp = angular.module('msfReportsApp',['ui.bootstrap',
+var eAushadhiStockDataImportApp = angular.module('eAushadhiStockDataImportApp',['ui.bootstrap',
     'ngRoute',
     'ngCookies',
     'ngSanitize',
@@ -17,8 +17,8 @@ var msfReportsApp = angular.module('msfReportsApp',['ui.bootstrap',
 
 .config(function($routeProvider,$translateProvider){
         $routeProvider.when('/', {
-            templateUrl:'views/audit-report.html',
-            controller: 'AuditController'
+            templateUrl:'views/data-import.html',
+            controller: 'dataImportController'
         }).otherwise({
             redirectTo : '/'
         });

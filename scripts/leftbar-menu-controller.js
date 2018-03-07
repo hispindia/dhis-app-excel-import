@@ -1,8 +1,8 @@
 //Controller for column show/hide
-eAushadhiStockDataImportApp.controller('LeftBarMenuController',
+dataImportApp.controller('LeftBarMenuController',
         function($scope,$location) {
 
         $scope.showAuditReport = function(){
-                $location.path('/audit-report').search();
+                $location.path('/data-import').search();
             };
         });

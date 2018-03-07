@@ -1,8 +1,8 @@
 /**
- * Created by Gourav & Wasib on 05/02/18.
+ * Created by Wasib on 26/02/18.
  */
 
-var eAushadhiStockDataImportApp = angular.module('eAushadhiStockDataImportApp',['ui.bootstrap',
+var dataImportApp = angular.module('dataImportApp',['ui.bootstrap',
     'ngRoute',
     'ngCookies',
     'ngSanitize',
@@ -18,7 +18,7 @@ var eAushadhiStockDataImportApp = angular.module('eAushadhiStockDataImportApp',[
 .config(function($routeProvider,$translateProvider){
         $routeProvider.when('/', {
             templateUrl:'views/data-import.html',
-            controller: 'dataImportController'
+            controller: 'AuditController'
         }).otherwise({
             redirectTo : '/'
         });

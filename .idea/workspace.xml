@@ -319,7 +319,7 @@
         <option value="$PROJECT_DIR$/views/left-bar.html" />
         <option value="$PROJECT_DIR$/scripts/services.js" />
         <option value="$PROJECT_DIR$/views/data-import.html" />
-        <option value="$PROJECT_DIR$/scripts/data-Import-controller.js" />
+        <option value="$PROJECT_DIR$/scripts/data-import-controller.js" />
         <option value="$PROJECT_DIR$/scripts/mmm.js" />
         <option value="$PROJECT_DIR$/scripts/event-report-controller.js" />
         <option value="$PROJECT_DIR$/views/TrackEntity-Audit.html" />
@@ -759,7 +759,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/data-Import-controller.js">
+    <entry file="file://$PROJECT_DIR$/scripts/data-import-controller.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="536" column="34" lean-forward="false" selection-start-line="532" selection-start-column="32" selection-end-line="536" selection-end-column="34" />

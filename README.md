@@ -1,1 +1,1 @@
-# Excel Import app for aggregate data without any mapping designed for Malaria to import Stock data.
+# Excel Import app for aggregate data without any mapping designed for Malaria to import Stock data with MultipleDE and MultipleOU.

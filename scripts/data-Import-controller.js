@@ -3950,16 +3950,16 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
     "s_no": 279,
     "name": "Vitamin A",
     "categorycombo_name": "Dropdown - Adequate",
-    "id": "",
-    "categorycombo": "",
+    "id": "Srq1goimPFO",
+    "categorycombo": "tlwZy5CYdQU",
     "type": "text"
   },
   {
     "s_no": 280,
     "name": "Vitamin A",
     "categorycombo_name": "Dropdown - Inadequate",
-    "id": "",
-    "categorycombo": "",
+    "id": "Srq1goimPFO",
+    "categorycombo": "sT4N65Nygnr",
     "type": "text"
   },
   {

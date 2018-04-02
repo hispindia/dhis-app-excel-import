@@ -148,7 +148,7 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
       "name": "Number of PW tested using POC test for Syphilis",
       "categorycombo_name": "Number reported during the month",
       "id": "UJq5NXnRpPm",
-      "categorycombo": "HllvX50cXC0",
+      "categorycombo": "ZnztZgggxd6",
       "type": "text"
     },
     {

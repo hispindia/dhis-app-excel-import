@@ -820,17 +820,18 @@ dhis2API.dataValue.prototype.POST = function(successCallback,errorCallback,index
 
 dhis2API.user = function(){
 
-        this.firstName= undefined;
-        this.surname=undefined;
-        this.email= undefined;
-        this.userCredentials = {
-	    "userInfo": {},
-            "username": undefined,
-            "password": undefined,
-            "userRoles": [ ]
-        };
-        this.organisationUnits= [];
-        this.userGroups = [  ]
+    this.firstName= undefined;
+    this.surname=undefined;
+    this.email= undefined;
+    this.phoneNumber = undefined;
+    this.userCredentials = {
+	"userInfo": {},
+        "username": undefined,
+        "password": undefined,
+        "userRoles": [ ]
+    };
+    this.organisationUnits= [];
+    this.userGroups = [  ]
 
 }
 
@@ -839,7 +840,8 @@ dhis2API.user.prototype.getAPIObject = function(){
 	"id" : this.userCredentials.userInfo.id,
         "firstName": this.firstName,
         "surname": this.surname,
-        "email": this.surname,
+        "email": this.email,
+        "phoneNumber": this.phoneNumber,
         "userCredentials": {
             "userInfo": this.userCredentials.userInfo,
             "username": this.userCredentials.username,
@@ -889,6 +891,14 @@ dhis2API.user.prototype.excelImportPopulator = function(header,data){
                     this.email = header[i].args;
                 }else{
                     this.email = data[header[i].key];
+                }
+            break
+            
+            case FIELD_PHONE:
+                if (header[i].args){
+                    this.phoneNumber = header[i].args;
+                }else{
+                    this.phoneNumber = data[header[i].key];
                 }
                 break
             case FIELD_USERNAME:

@@ -4630,7 +4630,7 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
         data: JSON.stringify(dataValueSet),
         success: function (response) {
           dataSetComplete(filteredResultou);
-          var text = "  , Data imported successfully!";
+          var text = "Data imported successfully!";
           $('#result').append(text);
           $('#response').append(JSON.stringify(response.importCount));
         },
@@ -4680,15 +4680,15 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
         $timeout(function () {
           $('#loader').hide();
         });
-          $("#result").html("REGISTRATION SUCCESSFULL, ");
-          console.log("Registration Complete");
+          $("#result1").html("Registration Completed!");
+          console.log("Registration Completed!");
       },
       error: function (response) {
         $timeout(function () {
           $('#loader').hide();
         });
-          console.log("Error in Registration Complete");
-          $("#result").html("REGISTRATION IGNORED");
+          $("#result1").html("Registration Ignored!");
+          console.log("Registration Ignored!");
       }
   });
 

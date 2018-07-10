@@ -4435,11 +4435,10 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
   }
 
 
-
   $scope.getAllPrograms = function (selectedProgram) {
 
     if (selectedProgram != undefined || selectedProgram != null) {
-
+      $scope.filteredOrgUnitList = [];
       $scope.DataSet = selectedProgram.id;
       //  var url4 = '../../dataSets.json?filter=id:eq:' + $scope.DataSet + "&fields=id,name,periodType,organisationUnits[id,name,code,attributeValues[attribute[id,name,code],value]&paging=false";
       var url4 = "../../organisationUnitGroups/" + $scope.selectedGroupSet + ".json?fields=id,name,code,organisationUnits[id,name,code,attributeValues[attribute[id,name,code],value]&paging=false";
@@ -4450,7 +4449,6 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
         $.get(url1, function (data1) {
           $scope.allOrgUnit = data1.organisationUnits;
 
-          $scope.filteredOrgUnitList = [];
           angular.forEach($scope.dataSetOrgUnit, function (setOrgUnit) {
             angular.forEach($scope.allOrgUnit, function (all_OrgUnit) {
               if (setOrgUnit.id === all_OrgUnit.id) {
@@ -4548,6 +4546,7 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
     }
 
     var result = [];
+    var resultOu = [];
     for (var i = 0; i < finalOu.length; i++) {
       for (var j = 0; j < DEsheet.length; j++) {
         for (var obj in sheet) {
@@ -4562,9 +4561,10 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
                     if (DEsheet[j].type == "date") {
                       value = myFunction(value);
                     }
+                    if( value != null || value != undefined || value != ""){
                     result.push({ 's.no': DEsheet[j].s_no, 'ou': prop, 'ouId': finalOu[i].id, 'dataElement': DEsheet[j].name, 'catComId': DEsheet[j].categorycombo, 'deId': DEsheet[j].id, 'value': value });
-                    // }
-                    //}
+                    resultOu.push(finalOu[i].id);
+                    }
                   }
                 }
               }
@@ -4574,7 +4574,10 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
       }
     }
     console.log(result);
-    pushDataSetVal(result);
+    var filteredResultou = resultOu.filter(function(item, pos){
+      return resultOu.indexOf(item)== pos; 
+    });
+    pushDataSetVal(result,filteredResultou);
   };
 
   var myFunction = function (date) {
@@ -4598,7 +4601,7 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
     return date;
   }
 
-  var pushDataSetVal = function (result) {
+  var pushDataSetVal = function (result,filteredResultou) {
 
     if (result.length != 0) {
 
@@ -4626,10 +4629,8 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
         url: '../../dataValueSets',
         data: JSON.stringify(dataValueSet),
         success: function (response) {
-          $timeout(function () {
-            $('#loader').hide();
-          });
-          var text = "Data imported successfully!";
+          dataSetComplete(filteredResultou);
+          var text = "  , Data imported successfully!";
           $('#result').append(text);
           $('#response').append(JSON.stringify(response.importCount));
         },
@@ -4656,6 +4657,43 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
       });
       alert("No data to import!");
     }
+  }
+
+  var dataSetComplete = function(filteredResultou){
+
+  for (var z in filteredResultou) {
+
+    var dataSetCompleteParams = {
+      "ds": $scope.DataSet,
+      "pe": $scope.selectedPeriod,
+      "ou": filteredResultou[z],
+      "multiOu": false
+    };
+
+    $.ajax({
+      async: false,
+      type: 'post',
+      dataType: 'json',
+      url: '../../25/completeDataSetRegistrations',
+      data:  dataSetCompleteParams,
+      success: function (response) {
+        $timeout(function () {
+          $('#loader').hide();
+        });
+          $("#result").html("REGISTRATION SUCCESSFULL, ");
+          console.log("Registration Complete");
+      },
+      error: function (response) {
+        $timeout(function () {
+          $('#loader').hide();
+        });
+          console.log("Error in Registration Complete");
+          $("#result").html("REGISTRATION IGNORED");
+      }
+  });
+
+  }
+
   }
 
   jQuery(document).ready(function () {

@@ -34,9 +34,11 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
     $.get(url2, function (data2) {
       $scope.groupSets = [];
       for (var a = 0; a < data2.organisationUnitGroupSets.length; a++) {
+		  if(data2.organisationUnitGroupSets[a].id == 'FgxKwuM1ay0'){
         for (var b = 0; b < data2.organisationUnitGroupSets[a].organisationUnitGroups.length; b++) {
           $scope.groupSets.push(data2.organisationUnitGroupSets[a].organisationUnitGroups[b]);
         }
+		  }
       }
     });
 
@@ -50,9 +52,9 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
       $scope.dataSets = [];
 
       for (var b = 0; b < data2.dataSets.length; b++) {
-        //   if (data2.dataSets[b].id === "mwm9DF8OumI") {
+        //if (data2.dataSets[b].id === "FgxKwuM1ay0") {
         $scope.dataSets.push(data2.dataSets[b]);
-        //    }
+       // }
       }
       $('#loader').hide();
     });

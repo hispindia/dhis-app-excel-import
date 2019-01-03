@@ -28,6 +28,7 @@ h4 {
 }
 
 div#leftBar {
+    margin-top : 50px;
     width: 236px;
 }
 
@@ -35,6 +36,10 @@ div#orgUnitTree {
     height: 50%;
 }
 
+div#mainPage{
+    margin-top:70px;
+    margin-left : 10px;
+}
 .top-bar {
     font-size: 16pt;
     font-weight: normal;

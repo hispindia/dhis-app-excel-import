@@ -18,9 +18,6 @@ var excelImport = angular.module('excelImport',['ui.bootstrap',
 
 .config(function($routeProvider,$translateProvider){
         $routeProvider.when('/', {
-            templateUrl:'views/home.html',
-            controller: 'homeController'
-        }).when('/import', {
             templateUrl:'views/import.html',
             controller: 'importController'
         }).otherwise({

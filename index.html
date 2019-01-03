@@ -85,8 +85,40 @@
 
 </head>
 <body>
-<d2-header-bar></d2-header-bar>
+  <!-- Menu dependencies -->
+    <script type="text/javascript" src="../../../dhis-web-core-resource/react-15/react-15.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-core-resource/rxjs/4.1.0/rx.lite.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-core-resource/lodash/4.15.0/lodash.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-core-resource/lodash-functional/lodash-functional.js"></script>
+    
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/header-bar/babel-polyfill.js?_rev=0.1.7"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/header-bar/header-bar.js?_rev=0.1.7"></script>
+    
+    
+    <div id="header">
+      <img id="headerBanner" src="../../../api/staticContent/logo_banner" onclick="window.location.href='../dhis-web-commons-about/redirect.action'" style="cursor:pointer" title="View home page">
+      
+      <div id="dhisDropDownMenu"></div>
+    </div>
 
+    <script>
+      
+      window.onload = function(){
+      /* Menu Bar */
+      try {
+      if ('Dhis2HeaderBar' in window) {
+      Dhis2HeaderBar.initHeaderBar(document.querySelector('#header'), '../../../api', { noLoadingIndicator: true });
+      }
+      } catch (e) {
+      if ('console' in window) {
+      console.error(e);
+      }
+      }
+      
+      /********/
+      }
+    </script>
+    <!-- // End menu -->
 <div ng-view></div>
 
 </body>

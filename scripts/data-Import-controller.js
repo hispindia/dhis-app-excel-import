@@ -394,7 +394,7 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
         $.getJSON("../../dataSets/" + DataSet + ".json?fields=periodType", function (d) {
           var periodType = d.periodType;
           var today = new Date();
-          var lastyear = today.getFullYear() - 1;
+          var lastyear = today.getFullYear() - 2;
           var stDate = "01/01/" + lastyear;
           var latestMonth1 = today.getMonth() + 1;
           if (latestMonth1 < 10) {

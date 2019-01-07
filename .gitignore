@@ -1,0 +1,12 @@
+*.iml
+node_modules/
+lib/
+npm-debug.log
+.idea
+*.gzip
+build/
+target/
+nbproject/*
+.DS_Store
+node/
+package-lock.json

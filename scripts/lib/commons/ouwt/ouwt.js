@@ -15,7 +15,8 @@
  * selection.setMultipleSelectionAllowed function to change this.
  */
 
-var dhis2BaseUrl = "../../../";
+//var dhis2BaseUrl = "../../../";
+var dhis2BaseUrl = "../../..";
 var organisationUnitTreePath = dhis2BaseUrl + "/dhis-web-commons/ouwt/";
 var organisationUnits = {};
 

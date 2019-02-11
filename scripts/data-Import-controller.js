@@ -41,9 +41,8 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
 		  }
       }
     });
-
     $scope.loadDataSets($scope.selectedOrgUnit.id);
-  }
+  };
 
   $scope.loadDataSets = function (selectedDistrict) {
 
@@ -74,8 +73,7 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
         //   console.log($scope.phcOrgUnits);
     });*/
 
-  }
-
+  };
 
   $scope.getAllPrograms = function (selectedProgram) {
 
@@ -83,17 +81,17 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
       $scope.filteredOrgUnitList = [];
       $scope.DataSet = selectedProgram.id;
       //  var url4 = '../../dataSets.json?filter=id:eq:' + $scope.DataSet + "&fields=id,name,periodType,organisationUnits[id,name,code,attributeValues[attribute[id,name,code],value]&paging=false";
-      var url4 = "../../organisationUnitGroups/" + $scope.selectedGroupSet + ".json?fields=id,name,code,organisationUnits[id,name,code,attributeValues[attribute[id,name,code],value]&paging=false";
+      var url4 = "../../organisationUnitGroups/" + $scope.selectedGroupSet + ".json?fields=id,name,code,organisationUnits[id,name,code,level,attributeValues[attribute[id,name,code],value]&paging=false";
       $.get(url4, function (data4) {
         $scope.dataSetOrgUnit = data4.organisationUnits;
 
-        var url1 = "../../organisationUnits/" + $scope.selectedOrgUnitUid + ".json?includeDescendants=true&fields=id,name&paging=false";
+        var url1 = "../../organisationUnits/" + $scope.selectedOrgUnitUid + ".json?includeDescendants=true&fields=id,name,level&paging=false";
         $.get(url1, function (data1) {
           $scope.allOrgUnit = data1.organisationUnits;
 
           angular.forEach($scope.dataSetOrgUnit, function (setOrgUnit) {
             angular.forEach($scope.allOrgUnit, function (all_OrgUnit) {
-              if (setOrgUnit.id === all_OrgUnit.id) {
+              if (setOrgUnit.id === all_OrgUnit.id && setOrgUnit.level === all_OrgUnit.level ) {
                 $scope.filteredOrgUnitList.push(setOrgUnit);
               }
             });
@@ -129,12 +127,12 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
             $('#loader').show();
             parseExcel(file)
           }, 1000);
-          break
+          break;
         default: alert("Unsupported Format");
           break
       }
     }
-  }
+  };
 
 
   function parseExcel(file) {
@@ -153,12 +151,86 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
 
   $scope.getPeriod = function (selectedPeriod) {
     $scope.selectedPeriod = selectedPeriod;
-  }
+  };
 
   $scope.getSheetType = function (selectedSheetType) {
     $scope.selectedSheetTypeName = selectedSheetType.name;
     $scope.selectedGroupSet = selectedSheetType.id;
-  }
+    $scope.loadFilterDataSets( $scope.selectedSheetTypeName );
+  };
+
+  // load filtered dataSet
+
+  $scope.loadFilterDataSets = function ( selectedSheetTypeName ) {
+
+    var dataSetUrl = "";
+    $scope.dataSets = [];
+    if( selectedSheetTypeName === 'SC Group' ){
+        dataSetUrl = "../../dataSets/aYBouOsLf57.json?fields=id,name,code,periodType&paging=false";
+        $.get(dataSetUrl, function (dataSetResponse) {
+          $scope.dataSet = {
+              'id' : dataSetResponse.id,
+              'code' : dataSetResponse.code,
+              'name' : dataSetResponse.name,
+              'periodType' : dataSetResponse.periodType
+            };
+          $scope.dataSets.push($scope.dataSet);
+          $('#loader').hide();
+      });
+    }
+    else if ( selectedSheetTypeName === 'PHC Group' ){
+      dataSetUrl = "../../dataSets/hFnwSfU9cok.json?fields=id,name,code,periodType&paging=false";
+      $.get(dataSetUrl, function (dataSetResponse) {
+        $scope.dataSet = {
+          'id' : dataSetResponse.id,
+          'code' : dataSetResponse.code,
+          'name' : dataSetResponse.name,
+          'periodType' : dataSetResponse.periodType
+        };
+        $scope.dataSets.push($scope.dataSet);
+        $('#loader').hide();
+      });
+    }
+    else {
+      dataSetUrl = "../../dataSets.json?fields=id,name,code,periodType&paging=false";
+      $.get(dataSetUrl, function (dataSetResponse) {
+        for (var b = 0; b < dataSetResponse.dataSets.length; b++) {
+          $scope.dataSets.push(dataSetResponse.dataSets[b]);
+        }
+        $('#loader').hide();
+      });
+    }
+  };
+
+
+  /*
+  $scope.loadFilterDataSets = function ( selectedSheetTypeName ) {
+
+    var url2 = "../../dataSets.json?fields=id,name,code,periodType&paging=false";
+    $.get(url2, function (data2) {
+      $scope.dataSets = [];
+      for (var b = 0; b < data2.dataSets.length; b++) {
+
+        if ( selectedSheetTypeName === 'SC Group' && data2.dataSets[b].code === 'hmis_sc' ) {
+            $scope.dataSets.push(data2.dataSets[b]);
+            break;
+        }
+        else if ( selectedSheetTypeName === 'PHC Group' && data2.dataSets[b].id === 'hmis_phc' ) {
+            $scope.dataSets.push(data2.dataSets[b]);
+            break;
+        }
+        else{
+          $scope.dataSets.push(data2.dataSets[b]);
+        }
+      }
+      $('#loader').hide();
+    });
+  };
+*/
+
+
+
+
 
   var sheet2arr = function (sheet) {
     $('#response').empty();
@@ -359,17 +431,17 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
     }, false);
 
     loadPrograms = function () {
-      MetadataService.getOrgUnit($scope.selectedOrgUnitUid).then(function (orgUnit) {
-        $timeout(function () {
-          $scope.selectedOrgUnit = orgUnit;
-          $scope.orgUnitGroupSets();
-          $scope.programs = [];
-          for (var i = 0; i < orgUnit.dataSets.length; i++) {
-            $scope.programs.push(orgUnit.dataSets[i]);
-          }
-        });
-      });
+      $timeout(function () {
+        MetadataService.getOrgUnit($scope.selectedOrgUnitUid).then(function (orgUnit) {
+            $scope.selectedOrgUnit = orgUnit;
+            $scope.orgUnitGroupSets();
+            $scope.programs = [];
+            for (var i = 0; i < orgUnit.dataSets.length; i++) {
+              $scope.programs.push(orgUnit.dataSets[i]);
+            }
 
+        });
+      },10 );
       //  generateDataElements();
     }
 

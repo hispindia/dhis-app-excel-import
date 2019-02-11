@@ -49,7 +49,8 @@
                     baseUrl;
 
                 if (settings.baseUrl === undefined) {
-                    return "../../../";
+                    //return "../../../";
+                    return "../../..";
                 }
 
                 if (typeof settings.baseUrl !== "string") {

@@ -69,7 +69,8 @@
                     baseUrl;
 
                 if (dhis2.settings.baseUrl === undefined) {
-                    return "../../../";
+                    //return "../../../";
+                    return "../../..";
                 }
 
                 if (typeof dhis2.settings.baseUrl !== "string") {

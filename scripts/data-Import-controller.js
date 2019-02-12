@@ -46,7 +46,7 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
 
   $scope.loadDataSets = function (selectedDistrict) {
 
-    var url2 = "../../dataSets.json?fields=id,name,code,periodType&paging=false";
+    var url2 = "../../dataSets.json?fields=id,name,code,periodType,dataSetElements[dataElement[id,name]]&paging=false";
     $.get(url2, function (data2) {
       $scope.dataSets = [];
 
@@ -166,33 +166,35 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
     var dataSetUrl = "";
     $scope.dataSets = [];
     if( selectedSheetTypeName === 'SC Group' ){
-        dataSetUrl = "../../dataSets/aYBouOsLf57.json?fields=id,name,code,periodType&paging=false";
+        dataSetUrl = "../../dataSets/aYBouOsLf57.json?fields=id,name,code,periodType,dataSetElements[dataElement[id,name]]&paging=false";
         $.get(dataSetUrl, function (dataSetResponse) {
           $scope.dataSet = {
               'id' : dataSetResponse.id,
               'code' : dataSetResponse.code,
               'name' : dataSetResponse.name,
-              'periodType' : dataSetResponse.periodType
+              'periodType' : dataSetResponse.periodType,
+              'dataSetElements' : dataSetResponse.dataSetElements
             };
           $scope.dataSets.push($scope.dataSet);
           $('#loader').hide();
       });
     }
     else if ( selectedSheetTypeName === 'PHC Group' ){
-      dataSetUrl = "../../dataSets/hFnwSfU9cok.json?fields=id,name,code,periodType&paging=false";
+      dataSetUrl = "../../dataSets/hFnwSfU9cok.json?fields=id,name,code,periodType,dataSetElements[dataElement[id,name]]&paging=false";
       $.get(dataSetUrl, function (dataSetResponse) {
         $scope.dataSet = {
           'id' : dataSetResponse.id,
           'code' : dataSetResponse.code,
           'name' : dataSetResponse.name,
-          'periodType' : dataSetResponse.periodType
+          'periodType' : dataSetResponse.periodType,
+          'dataSetElements' : dataSetResponse.dataSetElements
         };
         $scope.dataSets.push($scope.dataSet);
         $('#loader').hide();
       });
     }
     else {
-      dataSetUrl = "../../dataSets.json?fields=id,name,code,periodType&paging=false";
+      dataSetUrl = "../../dataSets.json?fields=id,name,code,periodType,dataSetElements[dataElement[id,name]]&paging=false";
       $.get(dataSetUrl, function (dataSetResponse) {
         for (var b = 0; b < dataSetResponse.dataSets.length; b++) {
           $scope.dataSets.push(dataSetResponse.dataSets[b]);
@@ -262,29 +264,41 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
     var result = [];
     var resultOu = [];
     for (var i = 0; i < finalOu.length; i++) {
-      for (var j = 0; j < DEsheet.length; j++) {
-        for (var obj in sheet) {
-          if (sheet.hasOwnProperty(obj)) {
-            for (var prop in sheet[obj]) {
-              if (sheet[obj].hasOwnProperty(prop)) {
-                if (obj == j) {
-                  if (prop == finalOu[i].value) {
-                   // if (sheet[obj]['name'] == DEsheet[j].name) {
-                   //   if (sheet[obj]['categorycombo_name'] == DEsheet[j].categorycombo_name) {
+      for (var k = 0; k < $scope.dataSet.dataSetElements.length; k++) {
+        for (var j = 0; j < DEsheet.length; j++) {
+          if( DEsheet[j].id === $scope.dataSet.dataSetElements[k].dataElement.id ){
+            for (var obj in sheet) {
+              if (sheet.hasOwnProperty(obj)) {
+                for (var prop in sheet[obj]) {
+                  if (sheet[obj].hasOwnProperty(prop)) {
+                    if (obj == j) {
+                      if (prop == finalOu[i].value) {
+                      // if (sheet[obj]['name'] == DEsheet[j].name) {
+                      //   if (sheet[obj]['categorycombo_name'] == DEsheet[j].categorycombo_name) {
                         var value = sheet[obj][finalOu[i].value];
                         if (DEsheet[j].type == "date") {
                           var value = myFunction(value);
                         }
                         if (value != null || value != undefined || value != "") {
-                          result.push({ 's.no': DEsheet[j].s_no, 'ou': prop, 'ouId': finalOu[i].id, 'dataElement': DEsheet[j].name, 'catComId': DEsheet[j].categorycombo, 'deId': DEsheet[j].id, 'value': value });
+                          result.push({
+                            's.no': DEsheet[j].s_no,
+                            'ou': prop,
+                            'ouId': finalOu[i].id,
+                            'dataElement': DEsheet[j].name,
+                            'catComId': DEsheet[j].categorycombo,
+                            'deId': DEsheet[j].id,
+                            'value': value
+                          });
                           resultOu.push(finalOu[i].id);
                         }
                       }
                     }
+                  }
                 }
               }
             }
           }
+         }
         }
       }
       console.log(result);
@@ -293,7 +307,6 @@ dataImportApp.controller('DataImportController', function ($rootScope, $scope, $
       });
       pushDataSetVal(result, filteredResultou);
     };
-
     var myFunction = function (date) {
       // var str = "2122017"
       if (date.length == 8) {

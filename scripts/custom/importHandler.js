@@ -611,8 +611,16 @@ function importHandler(headers,importData,notificationCallback) {
 
         var user = new dhis2API.user();
         user.excelImportPopulator(header, data[index]);
-        user.POST(requestCallback, requestCallback, index);
-
+        user.checkIfAlreadyExist(user.userCredentials.username,createUser,updateUser);
+        function createUser(){
+            user.POST(requestCallback, requestCallback, index);            
+        }
+        
+        function updateUser(existingUser){
+            user.PUT(requestCallback, requestCallback, index,existingUser);     
+        }
+        
+       
         function requestCallback(response) {
             notificationCallback(response);
 

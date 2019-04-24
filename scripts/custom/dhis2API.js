@@ -994,6 +994,69 @@ dhis2API.user.prototype.POST = function(successCallback,errorCallback,index){
     return def;
 }
 
+dhis2API.user.prototype.PUT = function(successCallback,errorCallback,index,existingUser){
+    var user = this.getAPIObject();
+    user.userCredentials.id = existingUser.userCredentials.id; 
+    //delete user.userCredentials.username;
+    var def = $.Deferred();
+    
+    $.ajax({
+        type: "PUT",
+        dataType: "json",
+        async : true,
+        contentType: "application/json",
+        url: '../../users/'+existingUser.id,
+        data: JSON.stringify(user),
+        success: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = user;
+            response.importStat.domain = DOMAIN_USER;
+
+            successCallback(response);
+        },
+        error: function(response){
+            response.importStat = {};
+            response.importStat.index=index;
+            response.importStat.metadata = (user);
+            response.importStat.domain = DOMAIN_USER;
+
+            errorCallback(response);
+        }
+    });
+
+    return def;
+}
+
+
+dhis2API.user.prototype.checkIfAlreadyExist = function(username,createCallback,updateCallback){
+    var def = $.Deferred();
+
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        async : true,
+        contentType: "application/json",
+        url: '../../users?fields=id,userCredentials[id]&filter=userCredentials.username:eq:'+username,
+        success: function(response){
+            if (response.users.length == 0){
+                createCallback();
+            }else{
+                updateCallback(response.users[0]);
+            }
+
+            
+        },
+        error: function(response){debugger
+         
+            errorCallback(response);
+        }
+    });
+
+    return def;
+}
+
+
 function addImportStatToResponse(index,metadata,domain,outcome){
    var importStat = {};
     importStat.index=index;

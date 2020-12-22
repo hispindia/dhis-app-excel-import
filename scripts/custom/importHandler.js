@@ -6,6 +6,8 @@ function importHandler(headers,importData,notificationCallback) {
     var trackerSingleSheetCase = false;
     var teiSecondComingMap = [];
 
+    var ouiUID_array= [];
+
     if(isTrackerSingleSheetCase()){
         handleMultiDomainCase();
         return;
@@ -200,16 +202,16 @@ function importHandler(headers,importData,notificationCallback) {
             notificationCallback(response);
 
             if (response.status == "OK"){
-		var teiUID = null;
-		
-		if (response.importStat.domain == "teiUpdate" ){
-		    // Update case
-		    teiUID = response.response.reference;             
-		}else{
-		    // New Case
-		    teiUID = response.response.importSummaries[0].reference;
+        var teiUID = null;
+        
+        if (response.importStat.domain == "teiUpdate" ){
+            // Update case
+            teiUID = response.response.reference;             
+        }else{
+            // New Case
+            teiUID = response.response.importSummaries[0].reference;
                 }
-	
+    
                 var tei = [{
                     orgUnit : orgUnit,
                     trackedEntityInstance : teiUID
@@ -559,9 +561,38 @@ function importHandler(headers,importData,notificationCallback) {
 
         var lookUpIndex = getIndex(FIELD_UID_LOOKUP_BY_OU_CODE, header);
 
-        importDV(0, importData, header,lookUpIndex);
+        singlePayload(importData,header,lookUpIndex);
+
+        // importDV(0, importData, header,lookUpIndex);
 
     }
+
+    function singlePayload(data,header,lookUpIndex){
+
+        if (lookUpIndex != undefined){
+            var oui_code;
+            var dv = new dhis2API.dataValue();
+
+            for(var index=0;index<data.length;index++){
+
+                var code = data[index][header[lookUpIndex].key];
+
+                oui_code = getOuCode(code,lookUpIndex)
+                dv.excelImportPopulator(header, data[index],oui_code);                
+               
+                
+            }
+
+            dv.POST(requestCallback, requestCallback, index);
+
+        }
+
+        function requestCallback(response) {
+            notificationCallback(response);
+        }
+
+    }
+
 
     function importDV(index, data, header, lookUpIndex) {
         if (index == data.length) {
@@ -571,22 +602,20 @@ function importHandler(headers,importData,notificationCallback) {
         if (lookUpIndex != undefined){
 
             var code = data[index][header[lookUpIndex].key];
-            getOuByCode(code).then(function(orgUnits){
 
+            getOuByCode(code).then(function(orgUnits){
                 var ouUid;
                 if (orgUnits.length >0){
                     ouUid = orgUnits[0].id;
                 }
 
                 var dv = new dhis2API.dataValue();
-
                 dv.excelImportPopulator(header, data[index],ouUid);
                 dv.POST(requestCallback, requestCallback, index);
             });
 
         }else{
             var dv = new dhis2API.dataValue();
-
             dv.excelImportPopulator(header, data[index]);
             dv.POST(requestCallback, requestCallback, index);
         }
@@ -648,6 +677,7 @@ function importHandler(headers,importData,notificationCallback) {
         var def = $.Deferred();
         $.ajax({
             type: "GET",
+            asyn : false,
             dataType: "json",
             contentType: "application/json",
             url: '../../organisationUnits?fields=id,name&filter=code:eq:' + code,
@@ -661,6 +691,27 @@ function importHandler(headers,importData,notificationCallback) {
             }
         });
         return def;
+    }
+
+    function getOuCode(code,lookUpIndex){
+
+        var orgId;
+        $.ajax({
+            type: "GET",
+            async : false,
+            dataType: "json",
+            contentType: "application/json",
+            url: '../../organisationUnits.json?fields=id,name&filter=code:eq:' + code,
+            success: function (data) {
+                if (lookUpIndex){
+                    data.lookUpIndex=lookUpIndex;
+                }
+                orgId =  data.organisationUnits[0].id; 
+                
+            }
+        });
+        // console.log("data.organisationUnits",data.organisationUnits);
+       return orgId
     }
 
     function getEventByTei(teiUid,psUid) {

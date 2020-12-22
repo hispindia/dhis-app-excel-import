@@ -57,6 +57,8 @@ MetadataService.getRootOrgUnit().then(function(orgUnits){
                 }
 
                 var headersMapGrpByDomain = prepareMapGroupedById(headers,"domain");
+                
+
                 $timeout(function(){
                     $scope.initialSummary = prepareListFromMap(headersMapGrpByDomain);
                     $scope.importSummary = {};
@@ -74,9 +76,11 @@ MetadataService.getRootOrgUnit().then(function(orgUnits){
                         list.push({key : key, data :key});
                     }
                 }
+
                 return list;
             }
         }
+
         $scope.getSet = function(){
 
             var file = document.getElementById('fileInput').files[0];
@@ -99,12 +103,15 @@ MetadataService.getRootOrgUnit().then(function(orgUnits){
         }
 
         function notificationCallBack(response){
+
             var importStat = response.importStat;
 
             var summaryItem = {};
             summaryItem.domain = importStat.domain;
             summaryItem.metadata = (importStat.metadata);
+            
             console.log(response.status );
+            
             var conflicts = getConflicts(response);
             var reference = findReference(response);
             summaryItem.reference = reference;

@@ -39,6 +39,7 @@ MetadataService.getRootOrgUnit().then(function(orgUnits){
         }
 
         function parseExcel(file){
+            // alert("file type")
             var reader = new FileReader();
             reader.readAsBinaryString(file);
 
@@ -83,10 +84,13 @@ MetadataService.getRootOrgUnit().then(function(orgUnits){
 
         $scope.getSet = function(){
 
+            $(".modal").show();
             var file = document.getElementById('fileInput').files[0];
 
             if (!file) {
                 alert("Error Cannot find the file!");
+                $(".modal").hide();
+
                 return;
             }
 
@@ -111,7 +115,14 @@ MetadataService.getRootOrgUnit().then(function(orgUnits){
             summaryItem.metadata = (importStat.metadata);
             
             console.log(response.status );
-            
+
+            $(".modal").hide();
+
+            alert("Updated="+response.importCount.updated+" "+
+            "Imported="+response.importCount.imported+
+            " "+"Deleted="+response.importCount.deleted+" "+"Ignored="+response.importCount.ignored
+            )
+
             var conflicts = getConflicts(response);
             var reference = findReference(response);
             summaryItem.reference = reference;

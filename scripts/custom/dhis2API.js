@@ -700,6 +700,7 @@ dhis2API.organisationUnit.prototype.remove = function(index,callback){
 
 }
 
+// for data value set API
 
 dhis2API.dataValue = function(){
     this.period = undefined;
@@ -712,7 +713,8 @@ dhis2API.dataValue = function(){
     this.decoc = {
         dataElement : undefined,
         categoryOptionCombo:undefined,
-        value:undefined
+        value:undefined,
+        organisationUnit:undefined
     }
 
     this.dvs = {dataValues : []};
@@ -721,12 +723,11 @@ dhis2API.dataValue = function(){
 
 dhis2API.dataValue.prototype.getAPIObject = function(){
 
-
     for (var i=0;i<this.decocList.length;i++){
         var dv = {
             dataElement:this.decocList[i].dataElement,
             period:this.period,
-            orgUnit:this.orgUnit,
+            orgUnit :this.decocList[i].organisationUnit,
             categoryOptionCombo:this.decocList[i].categoryOptionCombo,
             value:this.decocList[i].value,
             storedBy:this.storedBy
@@ -741,6 +742,7 @@ dhis2API.dataValue.prototype.excelImportPopulator = function(header,data, ouUid)
     this.orgUnit = ouUid;
 
     for (var i=0;i<header.length;i++){
+
         switch(header[i].field){
             case FIELD_ORG_UNIT :
                 if (header[i].args){
@@ -760,6 +762,7 @@ dhis2API.dataValue.prototype.excelImportPopulator = function(header,data, ouUid)
                         decoc.dataElement = decocHeader[0];
                         decoc.categoryOptionCombo = decocHeader[1];
                         decoc.value = data[header[i].key];
+                        decoc.organisationUnit = ouUid;
 
                         this.decocList.push(decoc);
                     } else {
@@ -790,6 +793,8 @@ dhis2API.dataValue.prototype.excelImportPopulator = function(header,data, ouUid)
 dhis2API.dataValue.prototype.POST = function(successCallback,errorCallback,index){
     var dvs = this.getAPIObject()
     var def = $.Deferred();
+
+    console.log("dvs data ",dvs)
 
     $.ajax({
         type: "POST",
@@ -825,19 +830,18 @@ dhis2API.user = function(){
     this.email= undefined;
     this.phoneNumber = undefined;
     this.userCredentials = {
-	"userInfo": {},
+    "userInfo": {},
         "username": undefined,
         "password": undefined,
         "userRoles": [ ]
     };
     this.organisationUnits= [];
     this.userGroups = [  ]
-
 }
 
 dhis2API.user.prototype.getAPIObject = function(){
     var user = {
-	"id" : this.userCredentials.userInfo.id,
+    "id" : this.userCredentials.userInfo.id,
         "firstName": this.firstName,
         "surname": this.surname,
         "email": this.email,
@@ -951,7 +955,7 @@ dhis2API.user.prototype.excelImportPopulator = function(header,data){
                 }
 
             break
-	     case FIELD_USER_INFO:
+         case FIELD_USER_INFO:
               if (header[i].args){
                     this.userCredentials.userInfo.id = header[i].args;
                 }else{
@@ -1027,7 +1031,6 @@ dhis2API.user.prototype.PUT = function(successCallback,errorCallback,index,exist
 
     return def;
 }
-
 
 dhis2API.user.prototype.checkIfAlreadyExist = function(username,createCallback,updateCallback){
     var def = $.Deferred();

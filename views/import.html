@@ -5,11 +5,15 @@
     <input type="file" id="fileInput">
 
     <button ng-click="getSet()">Import</button>
-
-    <div ng-show="importSummary.outcome == 'error'">
-     <label>{{importSummary.errorMessage}}</label>
+        <div ng-show="importSummary.outcome == 'error'">
+         <label>{{importSummary.errorMessage}}</label>
     </div>
-    <div>
+
+    <span id="lblIPAddress"></span>
+    <div class="modal" style="display: none">
+        <div class="center">
+            <div class="loader"></div>
+        </div>
         Following Mappings were found :-
         <table class="table-bordered">
             <tr>
@@ -67,4 +71,5 @@
         </tr>
     </table>
 </div>
+
 </div>

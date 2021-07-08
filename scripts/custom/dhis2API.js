@@ -10,7 +10,7 @@ dhis2API.
     if (tei){
         this.uid = tei.trackedEntityInstance;
         this.orgUnit = tei.orgUnit;
-        this.trackedEntity = tei.trackedEntity;
+        this.trackedEntityType = tei.trackedEntityType;
         this.attributesMap = [];
         this.attributes = [];
 
@@ -21,14 +21,14 @@ dhis2API.
     }else{
 
         this.orgUnit = "";
-        this.trackedEntity = "";
+        this.trackedEntityType = "";
         this.attributes = [];
     }
 }
 dhis2API.trackedEntityInstance.prototype.getAPIObject = function(){
     var tei = {
         orgUnit : this.orgUnit,
-        trackedEntity : this.trackedEntity,
+        trackedEntityType : this.trackedEntityType,
         attributes : this.attributes
     }
     return tei;
@@ -51,9 +51,9 @@ dhis2API.trackedEntityInstance.prototype.excelImportPopulator = function(header,
             //     break
             case FIELD_TRACKED_ENTITY:
                 if (header[i].args){
-                    this.trackedEntity = header[i].args;
+                    this.trackedEntityType = header[i].args;
                 }else{
-                    this.trackedEntity = data[header[i].key];
+                    this.trackedEntityType = data[header[i].key];
                 }
                 break
             case FIELD_ATTRIBUTE:
@@ -86,9 +86,9 @@ dhis2API.trackedEntityInstance.prototype.ObjectPopulator = function(header,data)
                 break
             case FIELD_TRACKED_ENTITY:
                 if (header[i].args){
-                    this.trackedEntity = header[i].args;
+                    this.trackedEntityType = header[i].args;
                 }else{
-                    this.trackedEntity = data[header[i].key];
+                    this.trackedEntityType = data[header[i].key];
                 }
                 break
             case FIELD_ATTRIBUTE:

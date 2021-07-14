@@ -37,7 +37,8 @@ function register(headers,importData,notificationCallBack){
      function teiSuccessCallback(response,headers,teiHeaderKey){
         notificationCallBack(response);
          var index = response.importStat.index;
-         var teiID = response.response.reference;
+         //var teiID = response.response.reference;
+         var teiID = response.response.importSummaries[0].reference;
          var tei = trackedEntityInstances[index];
          tei.trackedEntityInstance = teiID;
         

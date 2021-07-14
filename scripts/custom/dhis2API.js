@@ -42,13 +42,13 @@ dhis2API.trackedEntityInstance.prototype.excelImportPopulator = function(header,
 
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
-            // case FIELD_ORG_UNIT :
-            //     if (header[i].args){
-            //         this.orgUnit = header[i].args;
-            //     }else{
-            //         this.orgUnit = data[header[i].key];
-            //     }
-            //     break
+            case FIELD_ORG_UNIT :
+                if (header[i].args){
+                    this.orgUnit = header[i].args;
+                }else{
+                    this.orgUnit = data[header[i].key];
+                }
+                break
             case FIELD_TRACKED_ENTITY:
                 if (header[i].args){
                     this.trackedEntityType = header[i].args;
@@ -92,7 +92,7 @@ dhis2API.trackedEntityInstance.prototype.ObjectPopulator = function(header,data)
                 }
                 break
             case FIELD_ATTRIBUTE:
-                if (this.attributesMap[header[i].args] == undefined){
+                if (this.attributesMap[header[i].args] === undefined){
                     continue;
                 }
                 this.attributesMap[header[i].args].value = data[header[i].key];

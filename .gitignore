@@ -2,6 +2,7 @@ node_modules/
 lib/
 npm-debug.log
 .idea/
+.idea/*
 *.gzip
 build/
 target/

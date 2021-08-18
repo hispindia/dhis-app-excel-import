@@ -2,8 +2,7 @@
  * Created by hisp on 2/12/15.
  */
 
-excelImport
-    .controller('PanelController', function( $rootScope,
+excelImport.controller('PanelController', function( $rootScope,
                                             $scope,
                                             $timeout,
                                             MetadataService){

@@ -92,7 +92,7 @@ dhis2API.trackedEntityInstance.prototype.ObjectPopulator = function(header,data)
                 }
                 break
             case FIELD_ATTRIBUTE:
-                if (this.attributesMap[header[i].args] === undefined){
+                if (this.attributesMap[header[i].args] == undefined){
                     continue;
                 }
                 this.attributesMap[header[i].args].value = data[header[i].key];
@@ -107,7 +107,7 @@ dhis2API.trackedEntityInstance.prototype.POST = function(successCallback,errorCa
     $.ajax({
         type: "POST",
         dataType: "json",
-        async : true,
+        async : false,
         contentType: "application/json",
         url: '../../trackedEntityInstances',
         data: JSON.stringify(tei),
@@ -141,6 +141,7 @@ dhis2API.trackedEntityInstance.prototype.PUT = function(successCallback,errorCal
     $.ajax({
         type: "PUT",
         dataType: "json",
+        async : false,
         contentType: "application/json",
         url: '../../trackedEntityInstances/'+this.uid,
         data: JSON.stringify(tei),
@@ -207,12 +208,11 @@ dhis2API.enrollment.prototype.excelImportPopulatorTemp = function (header,data,t
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
             case FIELD_ORG_UNIT :
-                // if (header[i].args){
-                //     this.orgUnit = header[i].args;
-                // }else{
-                //     this.orgUnit = data[header[i].key];
-                // }
-                this.orgUnit = tei.orgUnit;
+                if (header[i].args){
+                    this.orgUnit = header[i].args;
+                }else{
+                    this.orgUnit = data[header[i].key];
+                }
                 break
             case FIELD_PROGRAM:
                 if (header[i].args){
@@ -279,7 +279,7 @@ dhis2API.enrollment.prototype.POST = function(successCallback,errorCallback,inde
     $.ajax({
         type: "POST",
         dataType: "json",
-        async : true,
+        async : false,
         contentType: "application/json",
         url: '../../enrollments',
         data: JSON.stringify(enrollment),
@@ -310,7 +310,7 @@ dhis2API.enrollment.prototype.PUT = function(successCallback,errorCallback,index
     $.ajax({
         type: "PUT",
         dataType: "json",
-        async : true,
+        async : false,
         contentType: "application/json",
         url: '../../enrollments/'+enUid,
         data: JSON.stringify(enrollment),
@@ -372,7 +372,7 @@ dhis2API.events.prototype.POST = function(successCallback,index){
     $.ajax({
         type: "POST",
         dataType: "json",
-        async : true,
+        async : false,
         contentType: "application/json",
         url: '../../events',
         data: JSON.stringify(events),
@@ -414,13 +414,13 @@ dhis2API.event.prototype.excelImportPopulatorTemp = function(header,data,tei){
 
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
-            // case FIELD_ORG_UNIT :
-            //     if (header[i].args){
-            //         this.orgUnit = header[i].args;
-            //     }else{
-            //         this.orgUnit = data[header[i].key];
-            //     }
-            //     break
+            case FIELD_ORG_UNIT :
+                if (header[i].args){
+                    this.orgUnit = header[i].args;
+                }else{
+                    this.orgUnit = data[header[i].key];
+                }
+                break
             case FIELD_PROGRAM:
                 if (header[i].args){
                     this.program = header[i].args;
@@ -530,7 +530,7 @@ dhis2API.event.prototype.POST = function(successCallback,errorCallback,index,hea
     $.ajax({
         type: "POST",
         dataType: "json",
-        async : true,
+        async : false,
         contentType: "application/json",
         url: '../../events',
         data: JSON.stringify(event),
@@ -562,7 +562,7 @@ dhis2API.event.prototype.PUT = function(successCallback,errorCallback,index,evUI
     $.ajax({
         type: "PUT",
         dataType: "json",
-        async : true,
+        async : false,
         contentType: "application/json",
         url: '../../events/'+evUID,
         data: JSON.stringify(event),
@@ -701,7 +701,7 @@ dhis2API.dataElement.prototype.POST = function(successCallback,errorCallback,ind
     $.ajax({
         type: "POST",
         dataType: "json",
-        async : true,
+        async : false,
         contentType: "application/json",
         url: '../../events',
         data: JSON.stringify(event),
@@ -1090,7 +1090,7 @@ dhis2API.user.prototype.POST = function(successCallback,errorCallback,index){
     $.ajax({
         type: "POST",
         dataType: "json",
-        async : true,
+        async : false,
         contentType: "application/json",
         url: '../../users',
         data: JSON.stringify(user),

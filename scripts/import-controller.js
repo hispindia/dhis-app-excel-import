@@ -92,7 +92,8 @@ ROOT_OU_UID = orgUnits[0].id;
                 case "text/csv" :  parseCSV(file);
                     break
                 case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" :
-                case "application/vnd.ms-excel" :
+                    case "application/wps-office.xlsx":
+                case "application/vnd.ms-excel":
                     parseExcel(file);
                     break
                 default : alert("Unsupported Format");

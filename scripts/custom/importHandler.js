@@ -5,7 +5,6 @@
 function register(headers, importData, notificationCallBack) {
   var trackedEntityInstances = [];
   var program;
-
   for (var index = 0; index < importData.length; index++) {
     //looping throgh each line of data in excell sheet
     createTei(headers, index);
@@ -23,25 +22,43 @@ function register(headers, importData, notificationCallBack) {
     //var index = 0;
     var orgUnit = importData[index][header[getIndex(FIELD_ORG_UNIT, header)].key];
     program = header[getIndex(FIELD_PROGRAM, header)].args;
+    var teiCount = Number(getTEICount(orgUnit, program)) + 1;
+
+    enrollTEI(teiCount, importData, header);
+
+    function enrollTEI(teiCount, importData, header) {
     var tei = new dhis2API.trackedEntityInstance();
     var attrLookUpIndex = getIndex(FIELD_UID_LOOKUP_BY_ATTR, header);
-    getTEIByAttr(
-      ROOT_OU_UID,
-      header[attrLookUpIndex].args,
-      importData[index][header[attrLookUpIndex].key],
-      attrLookUpIndex,
-      orgUnit
-    ).then(function (response) {
-      trackedEntityInstances.push(tei);
-      if (response.trackedEntityInstances.length) {
-        tei.excelImportPopulator(header, importData[index], orgUnit);
-        tei.trackedEntityInstance = response.trackedEntityInstances[0].trackedEntityInstance;
-        createEvent(header, index);
-      } else {
-        tei.excelImportPopulator(header, importData[index], orgUnit);
-        tei.POST(teiSuccessCallback, teiFailedCallback, index, index, headers);
-      }
-    });
+    var patientId = getMultipleIndex(
+      FIELD_UID_LOOKUP_BY_ATTRS,
+      header,
+      importData,
+      index,
+      teiCount
+    );
+  importData[index][header[attrLookUpIndex].key] = patientId;
+      getTEIByAttr(
+        ROOT_OU_UID,
+        header[attrLookUpIndex].args,
+        importData[index][header[attrLookUpIndex].key],
+        attrLookUpIndex,
+        orgUnit
+      ).then(function (response) {
+        trackedEntityInstances.push(tei);
+        if (response.trackedEntityInstances.length) {
+
+          enrollTEI(teiCount++);
+          //for Update part
+          // tei.excelImportPopulator(header, importData[index], orgUnit);
+          // tei.trackedEntityInstance =
+          //   response.trackedEntityInstances[0].trackedEntityInstance;
+          // createEvent(header, index);
+        } else {
+          tei.excelImportPopulator(header, importData[index], orgUnit);
+          tei.POST(teiSuccessCallback, teiFailedCallback, index, index, headers);
+        }
+      });
+    }
   }
   function getTEIByAttr(rootOU, attr, value, lookUpIndex, ou) {
     var def = $.Deferred();
@@ -68,6 +85,21 @@ function register(headers, importData, notificationCallBack) {
       },
     });
     return def;
+  }
+
+  function getTEICount(orgUnit, program) {
+    var teiCount = "";
+    $.ajax({
+      type: "GET",
+      dataType: "json",
+      contentType: "application/json",
+      async: false,
+      url: `../../sqlViews/ZiyyrhTh64E/data.json?paging=false&var=orgUnitUid:${orgUnit}&var=programUid:${program}`,
+      success: function (data) {
+        teiCount = data.listGrid.rows[0][0];
+      },
+    });
+    return teiCount;
   }
 
   function teiSuccessCallback(response, headers, teiHeaderKey) {
@@ -197,6 +229,35 @@ function register(headers, importData, notificationCallBack) {
   function eventSuccessCallback(response) {
     notificationCallBack(response);
     console.log(response);
+  }
+
+  function getMultipleIndex(field, header, importData, index, teiCount) {
+    var patientId = "";
+    var ids = [];
+    for (var i = 0; i < header.length; i++) {
+      if (header[i].field == field) {
+        ids.push(i);
+      }
+    }
+
+    var state = importData[index][header[ids[0]].key];
+    var district = importData[index][header[ids[1]].key];
+    var block = importData[index][header[ids[2]].key];
+
+    if (state && district && block) {
+      let months = "JAN_FEB_MAR_APR_MAY_JUN_JUL_AUG_SEP_OCT_NOV_DEC";
+      months = months.split("_");
+      let date = new Date();
+      date = months[date.getMonth()] + "" + date.getFullYear();
+      patientId = `${state.slice(0, 2).toUpperCase()}-${district
+        .slice(0, 3)
+        .toUpperCase()}-${block.slice(0, 3).toUpperCase()}-${date}-${(
+        "00000" +
+        (teiCount + 1)
+      ).slice(-5)}`;
+    }
+
+    return patientId;
   }
 }
 

@@ -101,7 +101,7 @@ function importHandler(headers,importData,notificationCallback) {
         }
 
         if (lookUpFlag) {
-            getTEIByAttr(ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key]).then(function (tei) {
+            getTEIByAttr( header[getIndex(FIELD_PROGRAM, header)].args, ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key]).then(function (tei) {
 
                 var event = new dhis2API.event();
                 event.excelImportPopulator(header, data[index], tei);
@@ -161,7 +161,7 @@ function importHandler(headers,importData,notificationCallback) {
 
                 var lookUpIndex2 = getIndex(FIELD_UID_LOOKUP_BY_ATTR, header);
 
-                getTEIByAttr(ROOT_OU_UID, header[lookUpIndex2].args, data[index][header[lookUpIndex2].key],lookUpIndex,orgUnit).then(function (data_tei) {
+                getTEIByAttr(header[getIndex(FIELD_PROGRAM, header)].args,ROOT_OU_UID, header[lookUpIndex2].args, data[index][header[lookUpIndex2].key],lookUpIndex,orgUnit).then(function (data_tei) {
                     var orgUnit = data_tei.orgUnit;
                     var lookUpIndex = data_tei.lookUpIndex;
 
@@ -298,7 +298,7 @@ function importHandler(headers,importData,notificationCallback) {
         }
 
         if (lookUpFlag) {
-            getTEIByAttr(ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key],legacy_lookupindex).then(function (data_tei) {
+            getTEIByAttr(header[getIndex(FIELD_PROGRAM, header)].args,ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key],legacy_lookupindex).then(function (data_tei) {
                 var legacy_lookupindex = data_tei.lookUpIndex;
 
                 if (data_tei.trackedEntityInstances.length !=0) {
@@ -441,7 +441,7 @@ function importHandler(headers,importData,notificationCallback) {
         var tei = new dhis2API.trackedEntityInstance();
 
         if (lookUpFlag) {
-            getTEIByAttr(ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key]).then(function (_tei) {
+            getTEIByAttr(header[getIndex(FIELD_PROGRAM, header)].args, ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key]).then(function (_tei) {
                 if (_tei.length != 0) {
                     teiID = _tei[0].trackedEntityInstance;
                 }
@@ -502,7 +502,7 @@ function importHandler(headers,importData,notificationCallback) {
         }
 
         if (lookUpFlag) {
-            getTEIByAttr(ROOT_OU_UID, header[lookUpIndex].args, importData[index][header[lookUpIndex].key]).then(function (tei) {
+            getTEIByAttr(header[getIndex(FIELD_PROGRAM, header)].args, ROOT_OU_UID, header[lookUpIndex].args, importData[index][header[lookUpIndex].key]).then(function (tei) {
 
                 if (tei.length == 0) {
                     var response = {}
@@ -529,13 +529,13 @@ function importHandler(headers,importData,notificationCallback) {
         }
     }
 
-    function getTEIByAttr(rootOU, attr, value,lookUpIndex,ou) {
+    function getTEIByAttr(prgUID, rootOU, attr, value,lookUpIndex,ou) {
         var def = $.Deferred();
         $.ajax({
             type: "GET",
             dataType: "json",
             contentType: "application/json",
-            url: '../../trackedEntityInstances?ou=' + rootOU + '&ouMode=DESCENDANTS&filter=' + attr + ':eq:' + value,
+            url: '../../trackedEntityInstances?ou=' + rootOU + '&program=' + prgUID + '&ouMode=DESCENDANTS&filter=' + attr + ':eq:' + value,
             success: function (data) {
                 if (lookUpIndex){
                     data.lookUpIndex = lookUpIndex;

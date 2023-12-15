@@ -12,7 +12,7 @@ dhis2API.
         this.orgUnit = tei.orgUnit;
         this.trackedEntityType = tei.trackedEntityType;
         this.attributesMap = [];
-        this.attributens = [];
+        this.attributes = [];
 
         for (var i=0;i<tei.attributes.length;i++){
             this.attributesMap[tei.attributes[i].attribute] = tei.attributes[i];
@@ -306,7 +306,8 @@ dhis2API.enrollment.prototype.getAPIObject = function(){
         orgUnit : this.orgUnit,
         trackedEntityInstance : this.tei,
         program : this.program,
-        enrollmentDate : this.enrollmentDate
+        enrollmentDate : this.enrollmentDate,
+        incidentDate: this.enrollmentDate,
     }
     return ent;
 }

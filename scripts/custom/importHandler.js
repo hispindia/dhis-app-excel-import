@@ -130,8 +130,8 @@ function importHandler(headers,importData,notificationCallback) {
 
     function importTEIs(header) {
 
-        var lookUpIndex = getIndex(FIELD_UID_LOOKUP_BY_CODE, header);
-
+        //var lookUpIndex = getIndex(FIELD_UID_LOOKUP_BY_CODE, header);
+        var lookUpIndex = true;
         if (lookUpIndex){
             importTEI(0, importData, header,true,lookUpIndex);
         }else{
@@ -149,9 +149,11 @@ function importHandler(headers,importData,notificationCallback) {
 
         if (lookUpFlag){
 
-            var code = data[index][header[lookUpIndex].key];
-           getOuByCode(code,lookUpIndex).then(function(orgUnits){
+            //var code = data[index][header[lookUpIndex].key];
+           //getOuByCode(code,lookUpIndex).then(function(orgUnits){
+
                // This has made refactoring absolutely necessary :(
+            /*
                 var lookUpIndex = orgUnits.lookUpIndex;
                 var ouUid;
                 if (orgUnits.organisationUnits.length >0){
@@ -159,6 +161,8 @@ function importHandler(headers,importData,notificationCallback) {
                 }
                 orgUnit = ouUid;
 
+             */
+               orgUnit = data[index][header[getIndex(FIELD_ORG_UNIT,header)].key];
                 var lookUpIndex2 = getIndex(FIELD_UID_LOOKUP_BY_ATTR, header);
 
                 getTEIByAttr(header[getIndex(FIELD_PROGRAM, header)].args,ROOT_OU_UID, header[lookUpIndex2].args, data[index][header[lookUpIndex2].key],lookUpIndex,orgUnit).then(function (data_tei) {
@@ -178,7 +182,7 @@ function importHandler(headers,importData,notificationCallback) {
 
                 })
 
-            });
+            //});
 
         }else{
 
@@ -201,7 +205,8 @@ function importHandler(headers,importData,notificationCallback) {
 
             if (response.status == "OK"){
                 //var teiUID = response.response.reference;
-                var teiUID = response.response.importSummaries[0].reference;
+                //var teiUID = response.response.importSummaries[0].reference;
+                var teiUID = response.response.reference;
                 var tei = [{
                     orgUnit : orgUnit,
                     trackedEntityInstance : teiUID
@@ -301,7 +306,7 @@ function importHandler(headers,importData,notificationCallback) {
             getTEIByAttr(header[getIndex(FIELD_PROGRAM, header)].args,ROOT_OU_UID, header[lookUpIndex].args, data[index][header[lookUpIndex].key],legacy_lookupindex).then(function (data_tei) {
                 var legacy_lookupindex = data_tei.lookUpIndex;
 
-                if (data_tei.trackedEntityInstances.length !=0) {
+                if (data_tei.trackedEntityInstances.length !==0) {
                     orgUnit = data_tei.trackedEntityInstances[0].orgUnit;
                     var tei = new dhis2API.trackedEntityInstance(data_tei.trackedEntityInstances[0]);
                     tei.ObjectPopulator(header, data[index]);

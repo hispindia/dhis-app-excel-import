@@ -42,6 +42,7 @@ dhis2API.trackedEntityInstance.prototype.excelImportPopulator = function(header,
 
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
+            /*
             case FIELD_ORG_UNIT :
                 if (header[i].args){
                     this.orgUnit = header[i].args;
@@ -49,6 +50,8 @@ dhis2API.trackedEntityInstance.prototype.excelImportPopulator = function(header,
                     this.orgUnit = data[header[i].key];
                 }
                 break
+
+            */
             case FIELD_TRACKED_ENTITY:
                 if (header[i].args){
                     this.trackedEntityType = header[i].args;
@@ -73,10 +76,15 @@ dhis2API.trackedEntityInstance.prototype.excelImportPopulator = function(header,
     }
 }
 
-dhis2API.trackedEntityInstance.prototype.ObjectPopulator = function(header,data){
+dhis2API.trackedEntityInstance.prototype.ObjectPopulator = function(header,data,ouUID){
+
+    if(ouUID){
+        this.orgUnit = ouUID;
+    }
 
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
+            /*
             case FIELD_ORG_UNIT :
                 if (header[i].args){
                     this.orgUnit = header[i].args;
@@ -84,6 +92,8 @@ dhis2API.trackedEntityInstance.prototype.ObjectPopulator = function(header,data)
                     this.orgUnit = data[header[i].key];
                 }
                 break
+
+            */
             case FIELD_TRACKED_ENTITY:
                 if (header[i].args){
                     this.trackedEntityType = header[i].args;
@@ -92,7 +102,7 @@ dhis2API.trackedEntityInstance.prototype.ObjectPopulator = function(header,data)
                 }
                 break
             case FIELD_ATTRIBUTE:
-                if (this.attributesMap[header[i].args] == undefined){
+                if (this.attributesMap[header[i].args] === undefined){
                     this.attributes.push({
                         attribute: header[i].args,
                         value:  data[header[i].key]
@@ -135,7 +145,7 @@ dhis2API.trackedEntityInstance.prototype.POST = function(successCallback,errorCa
         }
     });
 
-    return def;
+    return def.promise();
 }
 
 dhis2API.trackedEntityInstance.prototype.PUT = function(successCallback,errorCallback,index,legacy_lookupindex){
@@ -167,7 +177,7 @@ dhis2API.trackedEntityInstance.prototype.PUT = function(successCallback,errorCal
         }
     });
 
-    return def;
+    return def.promise();
 }
 
 
@@ -201,7 +211,7 @@ dhis2API.enrollment = function(){
 
 }
 
-dhis2API.enrollment.prototype.excelImportPopulator = function(header,data,tei){
+dhis2API.enrollment.prototype.excelImportPopulator = function(header,data,tei, tempEnrollmentDate){
 
     if (tei){
         if (tei.length >0){
@@ -209,8 +219,15 @@ dhis2API.enrollment.prototype.excelImportPopulator = function(header,data,tei){
             this.orgUnit = tei[0].orgUnit;
         }
     }
+
+    if (tempEnrollmentDate){
+        this.enrollmentDate = tempEnrollmentDate;
+    }
+    //console.log( "tempEnrollmentDate 2 " + this.enrollmentDate);
+
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
+            /*
             case FIELD_ORG_UNIT :
                 if (header[i].args){
                     this.orgUnit = header[i].args;
@@ -218,6 +235,8 @@ dhis2API.enrollment.prototype.excelImportPopulator = function(header,data,tei){
                     this.orgUnit = data[header[i].key];
                 }
                 break
+
+             */
             case FIELD_PROGRAM:
                 if (header[i].args){
                     this.program = header[i].args;
@@ -225,13 +244,18 @@ dhis2API.enrollment.prototype.excelImportPopulator = function(header,data,tei){
                     this.program = data[header[i].key];
                 }
                 break;
+
+                /*
             case FIELD_ENROLLMENT_DATE :
                 if (header[i].args){
                     this.enrollmentDate = header[i].args;
                 }else{
                     this.enrollmentDate = data[header[i].key];
                 }
-                break
+                break;
+                */
+
+                //FIELD_EVENT_DATE
  //           case FIELD_UID_LOOKUP_BY_ATTR :
 
         }
@@ -250,6 +274,7 @@ dhis2API.enrollment.prototype.POST = function(successCallback,errorCallback,inde
         url: '../../enrollments',
         data: JSON.stringify(enrollment),
         success: function(response){
+            response.enrollmentDate = enrollment.enrollmentDate;
             response.importStat = {};
             response.importStat.index=index;
             response.importStat.metadata = JSON.stringify(enrollment);
@@ -267,7 +292,7 @@ dhis2API.enrollment.prototype.POST = function(successCallback,errorCallback,inde
         }
     });
 
-    return def;
+    return def.promise();
 }
 dhis2API.enrollment.prototype.PUT = function(successCallback,errorCallback,index,enUid){
     var enrollment = this.getAPIObject();
@@ -298,7 +323,7 @@ dhis2API.enrollment.prototype.PUT = function(successCallback,errorCallback,index
         }
     });
 
-    return def;
+    return def.promise();
 }
 
 dhis2API.enrollment.prototype.getAPIObject = function(){
@@ -316,13 +341,13 @@ dhis2API.enrollment.prototype.getAPIObject = function(){
 dhis2API.event = function(){
     this.orgUnit = "";
     this.tei = "";
-    this.enrollmentDate = "";
+    this.eventDate = "";
     this.program = "";
     this.dataValues = [];
     this.status = undefined
 }
 
-dhis2API.event.prototype.excelImportPopulator = function(header,data,tei){
+dhis2API.event.prototype.excelImportPopulator = function(header,data,tei,selectedOrgUnitID){
 
     if (tei){
         if (tei.length >0){
@@ -330,9 +355,15 @@ dhis2API.event.prototype.excelImportPopulator = function(header,data,tei){
             this.orgUnit = tei[0].orgUnit;
         }
     }
+    else{
+        this.orgUnit = selectedOrgUnitID;
+    }
+
+    //this.eventDate = tempEventDate;
 
     for (var i=0;i<header.length;i++){
         switch(header[i].field){
+            /*
             case FIELD_ORG_UNIT :
                 if (header[i].args){
                     this.orgUnit = header[i].args;
@@ -340,6 +371,8 @@ dhis2API.event.prototype.excelImportPopulator = function(header,data,tei){
                     this.orgUnit = data[header[i].key];
                 }
                 break
+
+             */
             case FIELD_PROGRAM:
                 if (header[i].args){
                     this.program = header[i].args;
@@ -361,6 +394,7 @@ dhis2API.event.prototype.excelImportPopulator = function(header,data,tei){
                     this.eventDate = data[header[i].key];
                 }
                 break
+
             case FIELD_TRACKED_ENTITY_INSTANCE:
                 if (header[i].args){
                     this.tei = header[i].args;
@@ -411,7 +445,7 @@ dhis2API.event.prototype.POST = function(successCallback,errorCallback,index){
         }
     });
 
-    return def;
+    return def.promise();
 }
 
 
@@ -446,7 +480,7 @@ dhis2API.event.prototype.PUT = function(successCallback,errorCallback,index,evUI
         }
     });
 
-    return def;
+    return def.promise();
 }
 
 dhis2API.event.prototype.remove = function(id,index,callback){

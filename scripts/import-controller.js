@@ -12,6 +12,25 @@ MetadataService.getRootOrgUnit().then(function(orgUnits){
 ROOT_OU_UID = orgUnits[0].id;
 
 })
+    $scope.selectedOrgUnitUid = "";
+    $scope.selectedOrgUnit = "";
+    //initially load tree
+    selection.load();
+
+    // Listen for OU changes
+    selection.setListenerFunction(function(){
+        $scope.selectedOrgUnitUid = selection.getSelected();
+        getOrgUnitName();
+    },false);
+
+    getOrgUnitName = function(){
+        MetadataService.getOrgUnit($scope.selectedOrgUnitUid).then(function(orgUnit){
+            $timeout(function(){
+                $scope.selectedOrgUnit = orgUnit;
+                //alert("Please select the Level below -- " + $scope.selectedOrgUnit.name);
+            });
+        });
+    }
         $scope.xlsxFile = undefined;
         $scope.requestStats = {
             requestCount : 0,
@@ -32,7 +51,7 @@ ROOT_OU_UID = orgUnits[0].id;
                         $scope.initialSummary = prepareListFromMap(headersMapGrpByDomain);
                         $scope.importSummary = {};
                         $scope.importSummaryMap = [];
-                        importHandler($scope.initialSummary,data.data,notificationCallBack);
+                        importHandler($scope.selectedOrgUnit.id,$scope.initialSummary,data.data,notificationCallBack);
                     })
                 }
             });
@@ -55,13 +74,13 @@ ROOT_OU_UID = orgUnits[0].id;
                     var headers = assembleHeaderInfo(prepareKeyList(data_sheet[0]));
 
                 }
-
+                var orgUnitUID = $scope.selectedOrgUnit.id;
                 var headersMapGrpByDomain = prepareMapGroupedById(headers,"domain");
                 $timeout(function(){
                     $scope.initialSummary = prepareListFromMap(headersMapGrpByDomain);
                     $scope.importSummary = {};
                     $scope.importSummaryMap = [];
-                    importHandler($scope.initialSummary,data_sheet,notificationCallBack);
+                    importHandler(orgUnitUID,$scope.initialSummary,data_sheet,notificationCallBack);
                 })
             }
 
@@ -80,12 +99,17 @@ ROOT_OU_UID = orgUnits[0].id;
         $scope.getSet = function(){
 
             var file = document.getElementById('fileInput').files[0];
-
+            var selOrgUnit = document.getElementById('selectedOrgUnit').value;
+            //alert( selOrgUnit);
             if (!file) {
                 alert("Error Cannot find the file!");
                 return;
             }
+            if (!selOrgUnit) {
 
+                alert("Please Select OrganisationUnit");
+                return;
+            }
             switch(file.type){
                 case "text/csv" :  parseCSV(file);
                     break

@@ -5,6 +5,23 @@
 const DATA_SHEETNAME = "#import";
 const METADATA_SHEETNAME = "#mapping";
 
+// for aggregation
+//const TRACKER_PROGRAM = "M1SdQvObog0";
+const TRACKER_PROGRAM = "Uj0u5eXg0RK";
+
+const PROGRAM_ORG_UNIT = "PYHQttVvQU0";
+const SAMPLE_LOCATION_DEPT_CODE = "sampleLocationDepartment";
+const DEFAULT_CC_CODE = "default";
+const ORGANISMS_SAMPLE_WISE_DATASET = "oG3BlD3M9IE";
+const ORGANISMS_ANTIBIOTIC_DATASET = "CBsMJKLKkUQ";
+const ANTIBIOTIC_CATEGORY_COMBO_CODE = "antibiotic";
+
+const allOrganismsAntibioticWiseDataSet = "CBsMJKLKkUQ";
+const antibioticCategoryComboCode = "antibiotic";
+
+
+
+
 const TRACKER_PROGRAM_UID = "ProgramUID";
 const TRACKER_TRACKED_ENTITY = "TrackedEntityUID";
 const TRACKER_REGISTRATION_PLUS_ENROLLMENT = "TRACKER_REGISTRATION_PLUS_ENROLLMENT";

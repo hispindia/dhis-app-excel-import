@@ -1,40 +1,17 @@
 
 <div id="leftBar">
     <d2-left-bar></d2-left-bar>
-    <div id="orgUnitTree">
-        <ul>
-        </ul>
-    </div>
+
 </div>
 <div id="mainPage">
     <h2></h2>
-    <table>
-        <tr>
-            <td>Selected Organisation Unit &nbsp;&nbsp;</td>
-            <th id="selectedOrgUnit" value=" {{selectedOrgUnit.name}} " >{{selectedOrgUnit.name}}</th>
-        </tr>
-        <tr>
-            <td><label>Upload .xlsx or .csv file</label></td>
-            <td><input type="file" id="fileInput"></td>
-        </tr>
 
-        <tr>
-            <td> <button ng-click="getSet()">Import</button></td>
-        </tr>
-    </table>
-    <br>
-    <!--
-    <label>Upload .xlsx or .csv file</label>
+    <button ng-click="getEventList()">Aggregate Event DataValue</button>
 
-    <input type="file" id="fileInput">
-
-    <button ng-click="getSet()">Import</button>
-    -->
     <div ng-show="importSummary.outcome == 'error'">
      <label>{{importSummary.errorMessage}}</label>
     </div>
     <div>
-        Following Mappings were found :-
         <table class="table-bordered">
             <tr>
                 <th>Domain</th>

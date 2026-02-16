@@ -24,6 +24,11 @@
             }).when('/import', {
                 templateUrl: 'views/import.html',
                 controller: 'importController'
+
+            }).when('/aggregate_data', {
+                templateUrl: 'views/aggregate-data.html',
+                controller: 'aggregateDataController'
+
             }).otherwise({
                 redirectTo: '/'
             });
